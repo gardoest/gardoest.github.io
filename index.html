@@ -597,6 +597,7 @@
                 if (participants.length === 0) return;
 
                 const rule = GAME_RULES[game];
+                if (!rule) return; // Skip games not in GAME_RULES
                 let sorted;
 
                 if (rule.type === 'lowest') {
