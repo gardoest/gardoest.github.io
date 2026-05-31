@@ -750,8 +750,8 @@
             messageDiv.innerHTML = '<div style="text-align: center; padding: 20px;">⏳ Parser resultat med AI...</div>';
 
             try {
-                // Use Vercel API if available, otherwise fallback
-                const vercelUrl = `${window.location.origin}/api/parse-results` || 'https://your-vercel-app.vercel.app/api/parse-results';
+                // Use Vercel API
+                const vercelUrl = 'https://gardoest-github-io.vercel.app/api/parse-results';
 
                 const response = await fetch(vercelUrl, {
                     method: 'POST',
