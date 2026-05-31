@@ -950,7 +950,9 @@
             if (currentTab === 'daily') {
                 startDate.setDate(today.getDate());
             } else if (currentTab === 'weekly') {
-                startDate.setDate(today.getDate() - today.getDay());
+                const day = today.getDay();
+                const daysBack = day === 0 ? 6 : day - 1;
+                startDate.setDate(today.getDate() - daysBack);
             } else if (currentTab === 'monthly') {
                 startDate.setDate(1);
             } else {
