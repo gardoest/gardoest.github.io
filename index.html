@@ -13,38 +13,54 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a0f2e 50%, #0f1a2e 100%);
             color: #fff;
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         header {
             text-align: center;
             margin-bottom: 40px;
-            padding: 20px 0;
+            padding: 30px 0;
+            animation: slideDown 0.8s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
-            font-size: 3em;
+            font-size: 4em;
             margin-bottom: 10px;
-            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            background: linear-gradient(135deg, #ff006e, #fb5607, #ffbe0b, #8338ec);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            font-weight: 800;
-            letter-spacing: 2px;
+            font-weight: 900;
+            letter-spacing: 3px;
         }
 
         .subtitle {
-            font-size: 1.1em;
-            color: #00d4ff;
-            font-weight: 300;
+            font-size: 1.2em;
+            background: linear-gradient(135deg, #fb5607, #ffbe0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+            letter-spacing: 1px;
         }
 
         .controls {
@@ -56,39 +72,25 @@
         }
 
         button {
-            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            background: linear-gradient(135deg, #ff006e, #fb5607);
             border: none;
-            color: #1a1a2e;
+            color: #fff;
             padding: 12px 28px;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 1em;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 0, 110, 0.4);
         }
 
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 0, 110, 0.6);
         }
 
         button:active {
-            transform: translateY(0);
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+            transform: translateY(-1px);
         }
 
         .main-grid {
@@ -98,27 +100,42 @@
             margin-bottom: 30px;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 1200px) {
             .main-grid {
                 grid-template-columns: 1fr;
             }
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 12px;
-            padding: 25px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 30px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .card h2 {
-            color: #00d4ff;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
-            padding-bottom: 10px;
+            font-size: 1.6em;
+            margin-bottom: 25px;
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(135deg, #ff006e, #fb5607) 1;
+            padding-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .leaderboard {
@@ -130,45 +147,159 @@
         .leaderboard-item {
             display: flex;
             align-items: center;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            border-left: 4px solid transparent;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            border-left: 5px solid transparent;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .leaderboard-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateX(8px);
         }
 
         .rank {
-            font-size: 1.5em;
-            font-weight: 800;
-            width: 50px;
+            font-size: 2em;
+            font-weight: 900;
+            width: 60px;
             text-align: center;
             margin-right: 15px;
         }
 
-        .rank-1 { color: #FFD700; }
-        .rank-2 { color: #C0C0C0; }
-        .rank-3 { color: #CD7F32; }
-        .rank-other { color: #00d4ff; }
+        .rank-1 { color: #ffb703; text-shadow: 0 0 10px rgba(255, 183, 3, 0.5); }
+        .rank-2 { color: #c1c1c1; text-shadow: 0 0 10px rgba(193, 193, 193, 0.5); }
+        .rank-3 { color: #cd7f32; text-shadow: 0 0 10px rgba(205, 127, 50, 0.5); }
+        .rank-other { color: #8338ec; }
 
         .player-info {
             flex: 1;
         }
 
         .player-name {
-            font-weight: 600;
-            font-size: 1.1em;
-            margin-bottom: 4px;
+            font-weight: 700;
+            font-size: 1.15em;
+            margin-bottom: 6px;
         }
 
         .player-score {
-            font-size: 2em;
-            font-weight: 800;
-            color: #00d4ff;
+            font-size: 2.2em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff006e, #fb5607);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Input Form Styling */
+        .input-section {
+            grid-column: 1 / -1;
+            order: -1;
+        }
+
+        .form-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-field label {
+            font-weight: 700;
+            font-size: 0.95em;
+            color: #ffbe0b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-field input,
+        .input-field select {
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .input-field input:focus,
+        .input-field select:focus {
+            outline: none;
+            border-color: #ff006e;
+            background: rgba(255, 0, 110, 0.1);
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.3);
+        }
+
+        .input-field input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .game-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+        }
+
+        .game-input {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .game-input label {
+            font-weight: 700;
+            font-size: 0.9em;
+            color: #ffbe0b;
+        }
+
+        .game-input input {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1em;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .game-input input:focus {
+            outline: none;
+            border-color: #fb5607;
+            background: rgba(251, 86, 7, 0.1);
+            box-shadow: 0 0 20px rgba(251, 86, 7, 0.3);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #ff006e, #fb5607);
+            padding: 14px 40px;
+            font-size: 1.05em;
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, #8338ec, #3a0ca3);
+            padding: 14px 40px;
+            font-size: 1.05em;
         }
 
         .stats-grid {
@@ -177,42 +308,91 @@
             gap: 15px;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 700px) {
             .stats-grid {
                 grid-template-columns: 1fr;
             }
         }
 
         .stat-item {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 3px solid #00d4ff;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 4px solid #fb5607;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
         }
 
         .stat-item h3 {
-            color: #00d4ff;
-            font-size: 0.9em;
-            margin-bottom: 8px;
+            color: #ffbe0b;
+            font-size: 0.85em;
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .stat-value {
-            font-size: 1.5em;
-            font-weight: 700;
+            font-size: 1.8em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff006e, #fb5607);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .stat-player {
-            color: #888;
+            color: #aaa;
             font-size: 0.85em;
-            margin-top: 5px;
+            margin-top: 8px;
+        }
+
+        .games-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.95em;
+        }
+
+        .games-table th,
+        .games-table td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .games-table th {
+            background: rgba(255, 183, 3, 0.15);
+            color: #ffbe0b;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        .games-table tr:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .game-name {
+            color: #ffbe0b;
+            font-weight: 700;
+        }
+
+        .status-message {
+            text-align: center;
+            color: #aaa;
+            padding: 20px;
+            font-style: italic;
         }
 
         .error {
             background: rgba(255, 100, 100, 0.2);
             border: 1px solid rgba(255, 100, 100, 0.5);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 15px;
             margin: 15px 0;
             color: #ff9999;
@@ -221,7 +401,7 @@
         .success {
             background: rgba(100, 255, 100, 0.2);
             border: 1px solid rgba(100, 255, 100, 0.5);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 15px;
             margin: 15px 0;
             color: #99ff99;
@@ -229,7 +409,7 @@
 
         .timestamp {
             text-align: center;
-            color: #888;
+            color: #666;
             font-size: 0.9em;
             margin-top: 20px;
         }
@@ -238,41 +418,17 @@
             grid-column: 1 / -1;
         }
 
-        .games-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
+        .pulse {
+            animation: pulse 2s infinite;
         }
 
-        .games-table th,
-        .games-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
-        }
-
-        .games-table th {
-            background: rgba(0, 212, 255, 0.1);
-            color: #00d4ff;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.9em;
-        }
-
-        .games-table tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .game-name {
-            color: #00d4ff;
-            font-weight: 600;
-        }
-
-        .status-message {
-            text-align: center;
-            color: #888;
-            padding: 20px;
-            font-style: italic;
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
         }
     </style>
 </head>
@@ -282,15 +438,65 @@
             <h1>⚡ DLE</h1>
             <p class="subtitle">Daily Leaderboard</p>
             <div class="controls">
-                <button onclick="loadData()">
-                    <span id="refresh-icon">🔄</span> Oppdater
-                </button>
-                <button onclick="toggleDebug()">🔧 Debug</button>
+                <button onclick="loadData()">🔄 Oppdater</button>
+                <button onclick="scrollToForm()">✏️ Legg inn resultater</button>
             </div>
             <div id="status-message"></div>
         </header>
 
         <div class="main-grid">
+            <!-- Input Form -->
+            <div class="card input-section">
+                <h2>📝 Legg inn daglige resultater</h2>
+
+                <div class="form-group">
+                    <div class="input-field">
+                        <label for="input-date">Dato</label>
+                        <input type="date" id="input-date">
+                    </div>
+                    <div class="input-field">
+                        <label for="input-player">Deltaker</label>
+                        <select id="input-player">
+                            <option value="">Velg deltaker</option>
+                            <option value="Gard">Gard</option>
+                            <option value="Jone">Jone</option>
+                            <option value="Elias">Elias</option>
+                            <option value="Herman">Herman</option>
+                            <option value="Sindre">Sindre</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label style="color: #ffbe0b; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px;">Scores</label>
+                    <div class="game-inputs">
+                        <div class="game-input">
+                            <label>Wordle</label>
+                            <input type="number" id="game-wordle" placeholder="1-6" min="1" max="6">
+                        </div>
+                        <div class="game-input">
+                            <label>Timeguessr</label>
+                            <input type="number" id="game-timeguessr" placeholder="0-25000">
+                        </div>
+                        <div class="game-input">
+                            <label>Loldle</label>
+                            <input type="number" id="game-loldle" placeholder="1-5">
+                        </div>
+                        <div class="game-input">
+                            <label>Maptap</label>
+                            <input type="number" id="game-maptap" placeholder="0-5000">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-buttons">
+                    <button class="btn-submit" onclick="submitResults()">✅ Lagre resultat</button>
+                    <button class="btn-clear" onclick="clearForm()">🗑️ Nullstill</button>
+                </div>
+                <div id="form-message"></div>
+            </div>
+
+            <!-- Leaderboard -->
             <div class="card">
                 <h2>🏆 Stillingstabell</h2>
                 <div id="leaderboard" class="leaderboard">
@@ -298,15 +504,17 @@
                 </div>
             </div>
 
+            <!-- Stats -->
             <div class="card">
-                <h2>📊 Statistikk</h2>
+                <h2>📊 All-Time High</h2>
                 <div id="stats" class="stats-grid">
                     <div class="status-message">Laster data...</div>
                 </div>
             </div>
 
+            <!-- Games Breakdown -->
             <div class="card full-width-card">
-                <h2>🎮 Poeng per Konkuranse</h2>
+                <h2>🎮 Alle resultater</h2>
                 <div id="games-breakdown">
                     <div class="status-message">Laster data...</div>
                 </div>
@@ -324,41 +532,34 @@
         const GAMES = ['Wordle', 'Timeguessr', 'Loldle', 'Maptap'];
 
         const GAME_RULES = {
-            'Wordle': { type: 'lowest' },      // Lavest gjetter = vinner
-            'Timeguessr': { type: 'highest' }, // Høyest score = vinner
-            'Loldle': { type: 'lowest' },      // Lavest gjetter = vinner
-            'Maptap': { type: 'highest' }      // Høyest score = vinner
+            'Wordle': { type: 'lowest' },
+            'Timeguessr': { type: 'highest' },
+            'Loldle': { type: 'lowest' },
+            'Maptap': { type: 'highest' }
         };
 
-        let debugMode = false;
-        let cachedData = null;
+        // Set today's date as default
+        document.getElementById('input-date').valueAsDate = new Date();
 
         async function loadData() {
-            const refreshBtn = document.getElementById('refresh-icon');
-            refreshBtn.textContent = '⏳';
-
             try {
                 const response = await fetch(CSV_URL);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
                 const csv = await response.text();
                 const data = parseCSV(csv);
-                cachedData = data;
 
                 renderLeaderboard(data);
                 renderStats(data);
                 renderGamesBreakdown(data);
 
-                refreshBtn.textContent = '✓';
-                setTimeout(() => { refreshBtn.textContent = '🔄'; }, 1500);
-
                 document.getElementById('status-message').innerHTML = '<div class="success">✓ Data oppdatert</div>';
+                setTimeout(() => { document.getElementById('status-message').innerHTML = ''; }, 3000);
                 updateTimestamp();
             } catch (error) {
                 console.error('Error:', error);
                 document.getElementById('status-message').innerHTML =
-                    `<div class="error">⚠️ Feil ved lasting av data: ${error.message}</div>`;
-                refreshBtn.textContent = '🔄';
+                    `<div class="error">⚠️ Feil ved lasting: ${error.message}</div>`;
             }
         }
 
@@ -398,7 +599,6 @@
 
                 if (participants.length === 0) return;
 
-                // Sorter etter scoring regel
                 const rule = GAME_RULES[game];
                 let sorted;
 
@@ -408,7 +608,6 @@
                     sorted = participants.sort((a, b) => record.scores[b] - record.scores[a]);
                 }
 
-                // Tildel poeng basert på antall deltakere
                 const pointsPerPlace = participants.length;
                 sorted.forEach((player, idx) => {
                     const points = pointsPerPlace - idx;
@@ -425,14 +624,14 @@
             const html = sorted.map((player, idx) => {
                 const rank = idx + 1;
                 const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
-                const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+                const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
 
                 return `
                     <div class="leaderboard-item">
-                        <div class="rank ${rankClass}">${medal || rank}</div>
+                        <div class="rank ${rankClass}">${medal}</div>
                         <div class="player-info">
                             <div class="player-name">${player}</div>
-                            <div class="player-score">${data.playerScores[player]} poeng</div>
+                            <div class="player-score">${data.playerScores[player]}</div>
                         </div>
                     </div>
                 `;
@@ -482,11 +681,12 @@
 
             const html = Object.entries(gameStats).map(([game, stat]) => {
                 if (!stat.player) return '';
+                const icons = { 'Wordle': '📖', 'Timeguessr': '🌍', 'Loldle': '🎮', 'Maptap': '🗺️' };
                 return `
                     <div class="stat-item">
-                        <h3>${game}</h3>
+                        <h3>${icons[game]} ${game}</h3>
                         <div class="stat-value">${stat.score}</div>
-                        <div class="stat-player">🏆 ${stat.player} (${stat.date})</div>
+                        <div class="stat-player">🏆 ${stat.player}</div>
                     </div>
                 `;
             }).join('');
@@ -507,9 +707,9 @@
                     <tbody>
                         ${data.records.map(record => `
                             <tr>
-                                <td>${record.date}</td>
+                                <td><strong>${record.date}</strong></td>
                                 <td class="game-name">${record.game}</td>
-                                ${PARTICIPANTS.map(p => `<td>${record.scores[p] !== null ? record.scores[p] : '-'}</td>`).join('')}
+                                ${PARTICIPANTS.map(p => `<td>${record.scores[p] !== null ? record.scores[p] : '—'}</td>`).join('')}
                             </tr>
                         `).reverse().join('')}
                     </tbody>
@@ -524,18 +724,58 @@
             document.getElementById('timestamp').textContent = `Sist oppdatert: ${now.toLocaleString('no-NO')}`;
         }
 
-        function toggleDebug() {
-            debugMode = !debugMode;
-            if (debugMode && cachedData) {
-                console.log('Data:', cachedData);
-                alert('Debug info logget til console (F12)');
-            }
+        function scrollToForm() {
+            document.querySelector('.input-section').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Last data ved sidepåload
-        window.addEventListener('load', loadData);
+        function submitResults() {
+            const date = document.getElementById('input-date').value;
+            const player = document.getElementById('input-player').value;
+            const wordle = document.getElementById('game-wordle').value;
+            const timeguessr = document.getElementById('game-timeguessr').value;
+            const loldle = document.getElementById('game-loldle').value;
+            const maptap = document.getElementById('game-maptap').value;
 
-        // Auto-refresh hver 5. minutt
+            if (!date || !player) {
+                document.getElementById('form-message').innerHTML = '<div class="error">⚠️ Velg dato og deltaker</div>';
+                return;
+            }
+
+            const results = [];
+            if (wordle) results.push(`${date}, Wordle, ${player}, ${wordle}`);
+            if (timeguessr) results.push(`${date}, Timeguessr, ${player}, ${timeguessr}`);
+            if (loldle) results.push(`${date}, Loldle, ${player}, ${loldle}`);
+            if (maptap) results.push(`${date}, Maptap, ${player}, ${maptap}`);
+
+            if (results.length === 0) {
+                document.getElementById('form-message').innerHTML = '<div class="error">⚠️ Skriv minst ett resultat</div>';
+                return;
+            }
+
+            const formattedData = results.join('\n');
+
+            document.getElementById('form-message').innerHTML = `
+                <div class="success">
+                    ✓ Resultater klare! Kopier og lim inn i Google Sheets:<br><br>
+                    <code style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; display: block; margin-top: 10px; word-break: break-all; font-size: 0.9em;">
+                        ${formattedData.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                    </code>
+                </div>
+            `;
+
+            clearForm();
+        }
+
+        function clearForm() {
+            document.getElementById('input-date').valueAsDate = new Date();
+            document.getElementById('input-player').value = '';
+            document.getElementById('game-wordle').value = '';
+            document.getElementById('game-timeguessr').value = '';
+            document.getElementById('game-loldle').value = '';
+            document.getElementById('game-maptap').value = '';
+        }
+
+        window.addEventListener('load', loadData);
         setInterval(loadData, 5 * 60 * 1000);
     </script>
 </body>
