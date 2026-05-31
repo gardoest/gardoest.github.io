@@ -324,6 +324,69 @@
             font-weight: 600;
         }
 
+        /* Game Highlights */
+        .game-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.6s ease 0.2s backwards;
+        }
+
+        @media (max-width: 768px) {
+            .game-highlights {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .game-highlight-card {
+            background: linear-gradient(135deg, var(--bg-card), rgba(0, 255, 65, 0.05));
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-highlight-card:hover {
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg, var(--bg-card), rgba(0, 255, 65, 0.1));
+            transform: translateY(-4px);
+        }
+
+        .game-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .game-name {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .game-best-score {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 6px;
+        }
+
+        .game-best-player {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
         /* Game History */
         .history-section {
             margin-top: 30px;
@@ -782,6 +845,15 @@
                     </div>
                 </div>
 
+                <!-- Game Highlights (Best Scores per Game) -->
+                <div class="section-title" style="margin-top: 30px; margin-bottom: 16px;">Best Game Scores</div>
+                <div class="game-highlights" id="game-highlights">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎮</div>
+                        <div class="empty-state-text">Loading...</div>
+                    </div>
+                </div>
+
                 <!-- Stats Table -->
                 <div class="stats-section">
                     <table class="stats-table">
@@ -1051,19 +1123,49 @@
         function renderAll() {
             if (!allData) return;
             renderHighScores(allData);
+            renderGameHighlights(allData);
             renderStats(allData);
             renderHistory(allData);
         }
 
         function renderHighScores(data) {
-            const sorted = PARTICIPANTS.sort((a, b) => data.playerScores[b] - data.playerScores[a]);
+            const filteredRecords = getFilteredRecords();
+
+            // Recalculate scores for the time period
+            const periodScores = {};
+            PARTICIPANTS.forEach(p => { periodScores[p] = 0; });
+
+            filteredRecords.forEach(record => {
+                const game = record.game.trim();
+                const participants = PARTICIPANTS.filter(p => record.scores[p] !== null);
+
+                if (participants.length === 0) return;
+
+                const rule = GAME_RULES[game];
+                if (!rule) return;
+
+                let sorted;
+                if (rule.type === 'lowest') {
+                    sorted = participants.sort((a, b) => record.scores[a] - record.scores[b]);
+                } else {
+                    sorted = participants.sort((a, b) => record.scores[b] - record.scores[a]);
+                }
+
+                const pointsPerPlace = participants.length;
+                sorted.forEach((player, idx) => {
+                    const points = pointsPerPlace - idx;
+                    periodScores[player] += points;
+                });
+            });
+
+            const sorted = PARTICIPANTS.sort((a, b) => periodScores[b] - periodScores[a]);
             const topN = currentTab === 'alltime' ? 10 : 3;
             const topPlayers = sorted.slice(0, topN);
 
             const html = topPlayers.map((player, idx) => {
                 const rank = idx + 1;
                 const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
-                const points = data.playerScores[player];
+                const points = periodScores[player];
                 const isHighScore = rank === 1;
 
                 return `
@@ -1078,11 +1180,123 @@
             document.getElementById('high-scores').innerHTML = html;
         }
 
+        function getDateRange() {
+            const today = new Date();
+            let startDate = new Date(today);
+
+            if (currentTab === 'daily') {
+                startDate.setDate(today.getDate());
+            } else if (currentTab === 'weekly') {
+                startDate.setDate(today.getDate() - today.getDay());
+            } else if (currentTab === 'monthly') {
+                startDate.setDate(1);
+            } else {
+                startDate = new Date('2000-01-01');
+            }
+
+            startDate.setHours(0, 0, 0, 0);
+            return startDate;
+        }
+
+        function getFilteredRecords() {
+            if (!allData) return [];
+            const startDate = getDateRange();
+            return allData.records.filter(record => {
+                const recordDate = new Date(record.date);
+                recordDate.setHours(0, 0, 0, 0);
+                return recordDate >= startDate;
+            });
+        }
+
+        function renderGameHighlights(data) {
+            const filteredRecords = getFilteredRecords();
+            const gameIcons = {
+                'Wordle': '📖',
+                'Timeguessr': '🌍',
+                'Loldle': '🎮',
+                'Maptap': '🗺️'
+            };
+
+            const gameHighlights = {};
+            GAMES.forEach(game => {
+                gameHighlights[game] = { score: null, player: null };
+            });
+
+            filteredRecords.forEach(record => {
+                const game = record.game.trim();
+                if (!GAMES.includes(game)) return;
+
+                const rule = GAME_RULES[game];
+                if (!rule) return;
+
+                PARTICIPANTS.forEach(player => {
+                    if (record.scores[player] === null) return;
+                    const score = record.scores[player];
+
+                    if (gameHighlights[game].score === null) {
+                        gameHighlights[game] = { score, player };
+                    } else if (rule.type === 'lowest') {
+                        if (score < gameHighlights[game].score) {
+                            gameHighlights[game] = { score, player };
+                        }
+                    } else {
+                        if (score > gameHighlights[game].score) {
+                            gameHighlights[game] = { score, player };
+                        }
+                    }
+                });
+            });
+
+            const html = GAMES.map(game => {
+                const highlight = gameHighlights[game];
+                if (!highlight.score) return '';
+                return `
+                    <div class="game-highlight-card">
+                        <div class="game-icon">${gameIcons[game]}</div>
+                        <div class="game-name">${game}</div>
+                        <div class="game-best-score">${highlight.score}</div>
+                        <div class="game-best-player">🏆 ${highlight.player}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('game-highlights').innerHTML = html || '<div class="empty-state"><div class="empty-state-text">No games yet</div></div>';
+        }
+
         function renderStats(data) {
+            const filteredRecords = getFilteredRecords();
+
+            // Recalculate scores for the time period
+            const periodScores = {};
+            PARTICIPANTS.forEach(p => { periodScores[p] = 0; });
+
+            filteredRecords.forEach(record => {
+                const game = record.game.trim();
+                const participants = PARTICIPANTS.filter(p => record.scores[p] !== null);
+
+                if (participants.length === 0) return;
+
+                const rule = GAME_RULES[game];
+                if (!rule) return;
+
+                let sorted;
+                if (rule.type === 'lowest') {
+                    sorted = participants.sort((a, b) => record.scores[a] - record.scores[b]);
+                } else {
+                    sorted = participants.sort((a, b) => record.scores[b] - record.scores[a]);
+                }
+
+                const pointsPerPlace = participants.length;
+                sorted.forEach((player, idx) => {
+                    const points = pointsPerPlace - idx;
+                    periodScores[player] += points;
+                });
+            });
+
             const sorted = PARTICIPANTS.map(p => ({
                 name: p,
-                points: data.playerScores[p],
-                games: data.records.filter(r => {
+                points: periodScores[p],
+                games: filteredRecords.filter(r => {
                     const participants = PARTICIPANTS.filter(q => r.scores[q] !== null);
                     return r.scores[p] !== null && participants.includes(p);
                 }).length
@@ -1117,7 +1331,7 @@
         }
 
         function renderHistory(data) {
-            let filtered = data.records;
+            let filtered = getFilteredRecords();
             if (currentFilter !== 'all') {
                 filtered = filtered.filter(r => r.game === currentFilter);
             }
