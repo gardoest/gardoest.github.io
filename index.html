@@ -739,11 +739,6 @@
                     <textarea class="form-textarea" id="form-results" placeholder="Paste your game results here..." required></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Webhook URL</label>
-                    <input type="text" class="form-input" id="form-webhook" placeholder="https://script.google.com/macros/..." required>
-                </div>
-
                 <div id="form-message"></div>
 
                 <div class="form-actions">
@@ -832,14 +827,11 @@
             // Form
             document.getElementById('score-form').addEventListener('submit', submitScore);
 
-            // Webhook
+            // Initialize webhook URL in localStorage
             const defaultWebhook = 'https://script.google.com/macros/s/AKfycbz27Bz98TeAWcEjP_ufdoh5fMNoo6t544MSEl1Q2fgtlpbT4hqpclCU4t8ZJd1wvbR5/exec';
-            const saved = localStorage.getItem('webhookUrl') || defaultWebhook;
-            document.getElementById('form-webhook').value = saved;
-
-            document.getElementById('form-webhook').addEventListener('change', (e) => {
-                localStorage.setItem('webhookUrl', e.target.value);
-            });
+            if (!localStorage.getItem('webhookUrl')) {
+                localStorage.setItem('webhookUrl', defaultWebhook);
+            }
         }
 
         function closeModal() {
@@ -1159,10 +1151,10 @@
             e.preventDefault();
             const player = document.getElementById('form-player').value;
             const results = document.getElementById('form-results').value;
-            const webhook = document.getElementById('form-webhook').value;
+            const webhook = localStorage.getItem('webhookUrl');
             const msgDiv = document.getElementById('form-message');
 
-            if (!player || !results.trim() || !webhook) {
+            if (!player || !results.trim()) {
                 msgDiv.innerHTML = '<div class="form-message error">Please fill in all fields</div>';
                 return;
             }
