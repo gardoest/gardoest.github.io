@@ -905,29 +905,45 @@
             const lines = csv.trim().split('\n');
             if (lines.length < 2) return { records: [], playerScores: {} };
 
-            const records = [];
-            const playerScores = {};
-            PARTICIPANTS.forEach(p => { playerScores[p] = 0; });
+            // First pass: aggregate rows by date+game
+            const aggregated = {};
 
             for (let i = 1; i < lines.length; i++) {
                 const cells = lines[i].split(',').map(c => c.trim());
                 if (cells.length < 3) continue;
 
-                const record = {
-                    date: cells[0],
-                    game: normalizeGameName(cells[1]),
-                    scores: {}
-                };
+                const date = cells[0];
+                const game = normalizeGameName(cells[1]);
+                const key = `${date}_${game}`;
 
+                if (!aggregated[key]) {
+                    aggregated[key] = {
+                        date: date,
+                        game: game,
+                        scores: {}
+                    };
+                    PARTICIPANTS.forEach(p => { aggregated[key].scores[p] = null; });
+                }
+
+                // Merge scores from this row
                 for (let j = 0; j < PARTICIPANTS.length; j++) {
                     const scoreStr = cells[2 + j] || '';
                     const score = scoreStr === '' ? null : parseFloat(scoreStr);
-                    record.scores[PARTICIPANTS[j]] = score;
+                    if (score !== null) {
+                        aggregated[key].scores[PARTICIPANTS[j]] = score;
+                    }
                 }
+            }
 
+            // Second pass: calculate points
+            const records = [];
+            const playerScores = {};
+            PARTICIPANTS.forEach(p => { playerScores[p] = 0; });
+
+            for (const key in aggregated) {
+                const record = aggregated[key];
                 records.push(record);
 
-                // Calculate points
                 const game = record.game.trim();
                 const participants = PARTICIPANTS.filter(p => record.scores[p] !== null);
 
