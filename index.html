@@ -3,26 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DLE - Daily Leaderboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <title>FSM-GANG</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        :root {
-            --bg-dark: #1a1a1a;
-            --bg-card: #2a2a2a;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
-            --accent-blue: #00d4ff;
-            --accent-green: #00ff41;
-            --accent-gold: #ffd700;
-            --accent-purple: #d64aff;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --hover-bg: rgba(255, 255, 255, 0.05);
         }
 
         html, body {
@@ -32,8 +19,8 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-primary);
+            background: #000000;
+            color: #ffffff;
             overflow-x: hidden;
         }
 
@@ -44,68 +31,57 @@
             max-height: 100vh;
         }
 
-        /* Header */
-        header {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(212, 74, 255, 0.05));
-            border-bottom: 1px solid var(--border-color);
-            padding: 20px;
-            backdrop-filter: blur(10px);
+        /* Title */
+        .title {
+            text-align: center;
+            padding: 40px 20px 30px;
+            border-bottom: 1px solid #1a1a1a;
         }
 
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 28px;
+        .title-text {
+            font-size: 48px;
             font-weight: 900;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-family: 'Poppins', sans-serif;
             letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
-        .header-date {
-            font-size: 14px;
-            color: var(--text-secondary);
-            font-weight: 600;
+        @media (max-width: 768px) {
+            .title {
+                padding: 30px 20px 20px;
+            }
+            .title-text {
+                font-size: 32px;
+            }
         }
 
         /* Main Content */
         .main-content {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 30px 20px;
         }
 
         .content-wrapper {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         /* Tabs */
         .tabs {
             display: flex;
-            gap: 8px;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--border-color);
-            overflow-x: auto;
+            gap: 20px;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #1a1a1a;
             padding-bottom: 15px;
-            scroll-behavior: smooth;
+            overflow-x: auto;
         }
 
         .tab {
-            padding: 10px 16px;
+            padding: 8px 0;
             background: none;
             border: none;
-            color: var(--text-secondary);
-            font-size: 14px;
+            color: #808080;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             border-bottom: 2px solid transparent;
@@ -113,24 +89,23 @@
             white-space: nowrap;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            font-family: 'Inter', sans-serif;
         }
 
         .tab:hover {
-            color: var(--text-primary);
+            color: #ffffff;
         }
 
         .tab.active {
-            color: var(--accent-blue);
-            border-bottom-color: var(--accent-blue);
+            color: #ffffff;
+            border-bottom-color: #ffffff;
         }
 
-        /* High Scores Section */
+        /* High Scores */
         .high-scores {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 40px;
+            gap: 20px;
+            margin-bottom: 50px;
         }
 
         @media (max-width: 768px) {
@@ -140,23 +115,21 @@
         }
 
         .score-card {
-            background: linear-gradient(135deg, var(--bg-card), rgba(0, 212, 255, 0.05));
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 24px;
             animation: slideUp 0.6s ease forwards;
         }
 
         .score-card:nth-child(1) { animation-delay: 0s; }
-        .score-card:nth-child(2) { animation-delay: 0.1s; }
-        .score-card:nth-child(3) { animation-delay: 0.2s; }
+        .score-card:nth-child(2) { animation-delay: 0.05s; }
+        .score-card:nth-child(3) { animation-delay: 0.1s; }
 
         @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(15px);
             }
             to {
                 opacity: 1;
@@ -164,85 +137,86 @@
             }
         }
 
-        .score-card.high-score {
-            border-color: var(--accent-gold);
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), var(--bg-card));
-            animation: pulse-glow 2s infinite;
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% {
-                box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-            }
-            50% {
-                box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
-            }
-        }
-
         .rank-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 20px;
+            display: inline-block;
+            width: 32px;
+            height: 32px;
             margin-bottom: 12px;
-            font-weight: 900;
-        }
-
-        .rank-badge.rank-1 {
-            background: linear-gradient(135deg, var(--accent-gold), #ffaa00);
-            animation: bounce 1s ease infinite;
-        }
-
-        .rank-badge.rank-2 {
-            background: linear-gradient(135deg, #c0c0c0, #a9a9a9);
-        }
-
-        .rank-badge.rank-3 {
-            background: linear-gradient(135deg, #cd7f32, #b8860b);
-        }
-
-        .rank-badge.rank-other {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 32px;
+            text-align: center;
         }
 
         .score-card-name {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 16px;
+            font-weight: 600;
             margin-bottom: 8px;
-            color: var(--text-primary);
         }
 
         .score-card-value {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 900;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', monospace;
+        }
+
+        /* Game Highlights */
+        .game-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .game-highlights {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .game-highlight-card {
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .game-highlight-card:hover {
+            border-color: #ffffff;
+            background: #1a1a1a;
+        }
+
+        .game-name {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            color: #808080;
+        }
+
+        .game-best-score {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 4px;
+            font-family: 'Inter', monospace;
+        }
+
+        .game-best-player {
+            font-size: 11px;
+            color: #808080;
+            font-weight: 500;
         }
 
         /* Stats Table */
         .stats-section {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
             overflow: hidden;
-            margin-bottom: 30px;
-            animation: fadeIn 0.6s ease 0.3s backwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            margin-bottom: 50px;
         }
 
         .stats-table {
@@ -252,17 +226,16 @@
         }
 
         .stats-table thead {
-            background: linear-gradient(90deg, rgba(0, 212, 255, 0.1), transparent);
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 1px solid #1a1a1a;
         }
 
         .stats-table th {
             padding: 16px;
             text-align: left;
-            font-weight: 700;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: var(--accent-blue);
+            color: #808080;
             cursor: pointer;
             user-select: none;
             transition: all 0.3s ease;
@@ -270,7 +243,7 @@
         }
 
         .stats-table th:hover {
-            background: rgba(0, 212, 255, 0.1);
+            color: #ffffff;
         }
 
         .stats-table th.sortable::after {
@@ -281,125 +254,43 @@
         .stats-table th.sort-asc::after {
             content: ' ↑';
             opacity: 1;
-            color: var(--accent-green);
         }
 
         .stats-table th.sort-desc::after {
             content: ' ↓';
             opacity: 1;
-            color: var(--accent-green);
         }
 
         .stats-table td {
             padding: 14px 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .stats-table tbody tr {
-            transition: all 0.2s ease;
+            border-bottom: 1px solid #1a1a1a;
         }
 
         .stats-table tbody tr:hover {
-            background: var(--hover-bg);
+            background: #0f0f0f;
         }
 
         .player-cell {
             font-weight: 600;
-            color: var(--text-primary);
         }
 
         .points-cell {
-            color: var(--accent-gold);
             font-weight: 700;
             font-size: 16px;
-        }
-
-        .avg-cell {
-            color: var(--accent-blue);
-            font-weight: 600;
-        }
-
-        .games-cell {
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        /* Game Highlights */
-        .game-highlights {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 14px;
-            margin-bottom: 30px;
-            animation: fadeIn 0.6s ease 0.2s backwards;
-        }
-
-        @media (max-width: 768px) {
-            .game-highlights {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .game-highlight-card {
-            background: linear-gradient(135deg, var(--bg-card), rgba(0, 255, 65, 0.05));
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 16px;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .game-highlight-card:hover {
-            border-color: var(--accent-green);
-            background: linear-gradient(135deg, var(--bg-card), rgba(0, 255, 65, 0.1));
-            transform: translateY(-4px);
-        }
-
-        .game-icon {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .game-name {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .game-best-score {
-            font-size: 28px;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-family: 'Poppins', sans-serif;
-            margin-bottom: 6px;
-        }
-
-        .game-best-player {
-            font-size: 11px;
-            color: var(--text-secondary);
-            font-weight: 600;
         }
 
         /* Game History */
         .history-section {
-            margin-top: 30px;
-            animation: fadeIn 0.6s ease 0.4s backwards;
+            margin-top: 40px;
         }
 
         .section-title {
-            font-size: 16px;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 16px;
-            color: var(--text-primary);
+            color: #ffffff;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -408,10 +299,9 @@
         .section-title::before {
             content: '';
             display: inline-block;
-            width: 3px;
-            height: 20px;
-            background: linear-gradient(180deg, var(--accent-blue), var(--accent-green));
-            border-radius: 2px;
+            width: 2px;
+            height: 16px;
+            background: #ffffff;
         }
 
         .filter-buttons {
@@ -424,10 +314,10 @@
 
         .filter-btn {
             padding: 8px 12px;
-            background: var(--hover-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-secondary);
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            color: #808080;
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
@@ -438,72 +328,66 @@
         }
 
         .filter-btn:hover {
-            border-color: var(--accent-blue);
-            color: var(--accent-blue);
+            border-color: #ffffff;
+            color: #ffffff;
         }
 
         .filter-btn.active {
-            background: var(--accent-blue);
-            border-color: var(--accent-blue);
-            color: #000;
+            background: #ffffff;
+            border-color: #ffffff;
+            color: #000000;
         }
 
         .history-table {
             width: 100%;
             border-collapse: collapse;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
             overflow: hidden;
             font-size: 14px;
         }
 
         .history-table thead {
-            background: linear-gradient(90deg, rgba(0, 255, 65, 0.1), transparent);
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 1px solid #1a1a1a;
         }
 
         .history-table th {
             padding: 14px 16px;
             text-align: left;
-            font-weight: 700;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: var(--accent-green);
+            color: #808080;
             font-size: 12px;
         }
 
         .history-table td {
             padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .history-table tbody tr {
-            transition: all 0.2s ease;
+            border-bottom: 1px solid #1a1a1a;
         }
 
         .history-table tbody tr:hover {
-            background: var(--hover-bg);
+            background: #0f0f0f;
         }
 
         .date-cell {
-            color: var(--text-secondary);
+            color: #808080;
             font-size: 13px;
             font-weight: 500;
         }
 
         .game-cell {
             font-weight: 600;
-            color: var(--accent-green);
         }
 
         .score-badge {
             display: inline-block;
             padding: 4px 8px;
-            background: rgba(0, 212, 255, 0.15);
+            background: #1a1a1a;
             border-radius: 4px;
             font-weight: 600;
-            color: var(--accent-blue);
+            color: #ffffff;
             font-size: 12px;
         }
 
@@ -512,23 +396,23 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            width: 56px;
+            height: 56px;
+            border-radius: 4px;
+            background: #ffffff;
             border: none;
-            color: #000;
+            color: #000000;
             font-size: 24px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 4px 16px rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
             z-index: 100;
         }
 
         .fab:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 48px rgba(0, 212, 255, 0.5);
+            transform: scale(1.05);
+            box-shadow: 0 6px 24px rgba(255, 255, 255, 0.2);
         }
 
         .fab:active {
@@ -539,8 +423,8 @@
             .fab {
                 bottom: 20px;
                 right: 20px;
-                width: 56px;
-                height: 56px;
+                width: 52px;
+                height: 52px;
                 font-size: 20px;
             }
         }
@@ -553,7 +437,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(5px);
             z-index: 1000;
             animation: fadeInModal 0.3s ease;
@@ -566,25 +450,20 @@
         }
 
         @keyframes fadeInModal {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
             padding: 32px;
             max-width: 500px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
             animation: slideUpModal 0.3s ease;
-            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
         }
 
         @keyframes slideUpModal {
@@ -606,25 +485,23 @@
         }
 
         .modal-title {
-            font-size: 24px;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .modal-close {
             background: none;
             border: none;
             font-size: 24px;
-            color: var(--text-secondary);
+            color: #808080;
             cursor: pointer;
             transition: color 0.3s ease;
         }
 
         .modal-close:hover {
-            color: var(--text-primary);
+            color: #ffffff;
         }
 
         .form-group {
@@ -636,20 +513,20 @@
 
         .form-label {
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: var(--accent-blue);
+            color: #808080;
         }
 
         .form-input,
         .form-select,
         .form-textarea {
             padding: 12px 14px;
-            background: var(--hover-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            color: #ffffff;
             font-size: 14px;
             font-family: 'Inter', sans-serif;
             transition: all 0.3s ease;
@@ -659,15 +536,14 @@
         .form-select:focus,
         .form-textarea:focus {
             outline: none;
-            border-color: var(--accent-blue);
-            background: rgba(0, 212, 255, 0.1);
-            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+            border-color: #ffffff;
+            background: #0a0a0a;
         }
 
         .form-textarea {
             resize: vertical;
             min-height: 100px;
-            font-family: 'Monaco', 'Courier New', monospace;
+            font-family: 'Inter', monospace;
             font-size: 13px;
         }
 
@@ -682,8 +558,8 @@
             flex: 1;
             padding: 12px 16px;
             border: none;
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 4px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
             text-transform: uppercase;
@@ -692,29 +568,29 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
-            color: #000;
+            background: #ffffff;
+            color: #000000;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
         }
 
         .btn-secondary {
-            background: var(--hover-bg);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
+            background: #1a1a1a;
+            color: #ffffff;
+            border: 1px solid #2a2a2a;
         }
 
         .btn-secondary:hover {
-            border-color: var(--text-secondary);
-            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffffff;
+            background: #0f0f0f;
         }
 
         .form-message {
             padding: 12px;
-            border-radius: 8px;
+            border-radius: 4px;
             margin-top: 12px;
             font-size: 13px;
             font-weight: 600;
@@ -722,109 +598,40 @@
         }
 
         .form-message.success {
-            background: rgba(0, 255, 65, 0.15);
-            color: var(--accent-green);
-            border: 1px solid rgba(0, 255, 65, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .form-message.error {
-            background: rgba(255, 0, 0, 0.15);
+            background: rgba(255, 0, 0, 0.1);
             color: #ff6b6b;
-            border: 1px solid rgba(255, 0, 0, 0.3);
+            border: 1px solid rgba(255, 0, 0, 0.2);
         }
 
         .form-message.loading {
-            background: rgba(0, 212, 255, 0.15);
-            color: var(--accent-blue);
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
         }
 
-        /* Empty State */
         .empty-state {
             text-align: center;
             padding: 40px 20px;
-            color: var(--text-secondary);
-        }
-
-        .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
+            color: #808080;
         }
 
         .empty-state-text {
             font-size: 14px;
             line-height: 1.5;
         }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 16px;
-            }
-
-            header {
-                padding: 16px;
-            }
-
-            .header-content {
-                flex-direction: column;
-                gap: 12px;
-                text-align: center;
-            }
-
-            .logo {
-                font-size: 24px;
-            }
-
-            .tabs {
-                gap: 4px;
-            }
-
-            .tab {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-
-            .stats-table th,
-            .stats-table td {
-                padding: 12px 8px;
-                font-size: 12px;
-            }
-
-            .modal-content {
-                padding: 24px;
-            }
-
-            .high-scores {
-                gap: 12px;
-            }
-
-            .score-card {
-                padding: 16px;
-            }
-        }
-
-        /* Loading State */
-        @keyframes shimmer {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
-        }
-
-        .loading {
-            animation: shimmer 1.5s ease-in-out infinite;
-        }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- Header -->
-        <header>
-            <div class="header-content">
-                <div class="logo">⚡ DLE</div>
-                <div class="header-date" id="current-date"></div>
-            </div>
-        </header>
+        <!-- Title -->
+        <div class="title">
+            <div class="title-text">FSM-GANG</div>
+        </div>
 
         <!-- Main Content -->
         <div class="main-content">
@@ -840,16 +647,13 @@
                 <!-- High Scores -->
                 <div class="high-scores" id="high-scores">
                     <div class="empty-state">
-                        <div class="empty-state-icon">📊</div>
-                        <div class="empty-state-text">Loading scores...</div>
+                        <div class="empty-state-text">Loading...</div>
                     </div>
                 </div>
 
-                <!-- Game Highlights (Best Scores per Game) -->
-                <div class="section-title" style="margin-top: 30px; margin-bottom: 16px;">Best Game Scores</div>
+                <!-- Game Highlights -->
                 <div class="game-highlights" id="game-highlights">
                     <div class="empty-state">
-                        <div class="empty-state-icon">🎮</div>
                         <div class="empty-state-text">Loading...</div>
                     </div>
                 </div>
@@ -868,7 +672,7 @@
                         <tbody id="stats-body">
                             <tr>
                                 <td colspan="4" style="text-align: center; padding: 40px;">
-                                    <span style="color: var(--text-secondary);">Loading...</span>
+                                    <span style="color: #808080;">Loading...</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -879,9 +683,9 @@
                 <div class="history-section">
                     <div class="section-title">Recent Games</div>
                     <div class="filter-buttons">
-                        <button class="filter-btn active" data-filter="all">All Games</button>
+                        <button class="filter-btn active" data-filter="all">All</button>
                         <button class="filter-btn" data-filter="Wordle">Wordle</button>
-                        <button class="filter-btn" data-filter="Timeguessr">TimeGuessr</button>
+                        <button class="filter-btn" data-filter="TimeGuessr">TimeGuessr</button>
                         <button class="filter-btn" data-filter="Loldle">Loldle</button>
                         <button class="filter-btn" data-filter="Maptap">Maptap</button>
                     </div>
@@ -896,7 +700,7 @@
                         <tbody id="history-body">
                             <tr>
                                 <td colspan="3" style="text-align: center; padding: 40px;">
-                                    <span style="color: var(--text-secondary);">Loading...</span>
+                                    <span style="color: #808080;">Loading...</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -932,7 +736,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Results</label>
-                    <textarea class="form-textarea" id="form-results" placeholder="Paste your game results here (Wordle, TimeGuessr, Loldle, Maptap)..." required></textarea>
+                    <textarea class="form-textarea" id="form-results" placeholder="Paste your game results here..." required></textarea>
                 </div>
 
                 <div class="form-group">
@@ -965,19 +769,6 @@
             'Maptap': { type: 'highest' }
         };
 
-        // Normalize game names to standard format
-        function normalizeGameName(name) {
-            const normalized = {
-                'timeguessr': 'TimeGuessr',
-                'time guessr': 'TimeGuessr',
-                'wordle': 'Wordle',
-                'loldle': 'Loldle',
-                'maptap': 'Maptap',
-                'map tap': 'Maptap'
-            };
-            return normalized[name.toLowerCase().trim()] || name;
-        }
-
         let currentTab = 'daily';
         let currentFilter = 'all';
         let allData = null;
@@ -986,19 +777,9 @@
 
         // Initialize
         function init() {
-            updateDate();
-            loadWebhookUrl();
             attachEventListeners();
             loadData();
             setInterval(loadData, 5 * 60 * 1000);
-        }
-
-        function updateDate() {
-            const now = new Date();
-            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const dateStr = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
-            document.getElementById('current-date').textContent = dateStr;
         }
 
         function attachEventListeners() {
@@ -1050,15 +831,8 @@
 
             // Form
             document.getElementById('score-form').addEventListener('submit', submitScore);
-        }
 
-        function closeModal() {
-            document.getElementById('score-modal').classList.remove('active');
-            document.getElementById('score-form').reset();
-            document.getElementById('form-message').innerHTML = '';
-        }
-
-        function loadWebhookUrl() {
+            // Webhook
             const defaultWebhook = 'https://script.google.com/macros/s/AKfycbz27Bz98TeAWcEjP_ufdoh5fMNoo6t544MSEl1Q2fgtlpbT4hqpclCU4t8ZJd1wvbR5/exec';
             const saved = localStorage.getItem('webhookUrl') || defaultWebhook;
             document.getElementById('form-webhook').value = saved;
@@ -1066,6 +840,12 @@
             document.getElementById('form-webhook').addEventListener('change', (e) => {
                 localStorage.setItem('webhookUrl', e.target.value);
             });
+        }
+
+        function closeModal() {
+            document.getElementById('score-modal').classList.remove('active');
+            document.getElementById('score-form').reset();
+            document.getElementById('form-message').innerHTML = '';
         }
 
         async function loadData() {
@@ -1079,6 +859,18 @@
             } catch (error) {
                 console.error('Error loading data:', error);
             }
+        }
+
+        function normalizeGameName(name) {
+            const normalized = {
+                'timeguessr': 'TimeGuessr',
+                'time guessr': 'TimeGuessr',
+                'wordle': 'Wordle',
+                'loldle': 'Loldle',
+                'maptap': 'Maptap',
+                'map tap': 'Maptap'
+            };
+            return normalized[name.toLowerCase().trim()] || name;
         }
 
         function parseCSV(csv) {
@@ -1133,6 +925,34 @@
             return { records: records.reverse(), playerScores };
         }
 
+        function getDateRange() {
+            const today = new Date();
+            let startDate = new Date(today);
+
+            if (currentTab === 'daily') {
+                startDate.setDate(today.getDate());
+            } else if (currentTab === 'weekly') {
+                startDate.setDate(today.getDate() - today.getDay());
+            } else if (currentTab === 'monthly') {
+                startDate.setDate(1);
+            } else {
+                startDate = new Date('2000-01-01');
+            }
+
+            startDate.setHours(0, 0, 0, 0);
+            return startDate;
+        }
+
+        function getFilteredRecords() {
+            if (!allData) return [];
+            const startDate = getDateRange();
+            return allData.records.filter(record => {
+                const recordDate = new Date(record.date);
+                recordDate.setHours(0, 0, 0, 0);
+                return recordDate >= startDate;
+            });
+        }
+
         function renderAll() {
             if (!allData) return;
             renderHighScores(allData);
@@ -1143,8 +963,6 @@
 
         function renderHighScores(data) {
             const filteredRecords = getFilteredRecords();
-
-            // Recalculate scores for the time period
             const periodScores = {};
             PARTICIPANTS.forEach(p => { periodScores[p] = 0; });
 
@@ -1177,59 +995,22 @@
 
             const html = topPlayers.map((player, idx) => {
                 const rank = idx + 1;
-                const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
                 const points = periodScores[player];
-                const isHighScore = rank === 1;
 
                 return `
-                    <div class="score-card ${isHighScore ? 'high-score' : ''}">
-                        <div class="rank-badge rank-${rank}">${rank}</div>
+                    <div class="score-card">
+                        <div class="rank-badge">${rank}</div>
                         <div class="score-card-name">${player}</div>
                         <div class="score-card-value">${points}</div>
                     </div>
                 `;
             }).join('');
 
-            document.getElementById('high-scores').innerHTML = html;
-        }
-
-        function getDateRange() {
-            const today = new Date();
-            let startDate = new Date(today);
-
-            if (currentTab === 'daily') {
-                startDate.setDate(today.getDate());
-            } else if (currentTab === 'weekly') {
-                startDate.setDate(today.getDate() - today.getDay());
-            } else if (currentTab === 'monthly') {
-                startDate.setDate(1);
-            } else {
-                startDate = new Date('2000-01-01');
-            }
-
-            startDate.setHours(0, 0, 0, 0);
-            return startDate;
-        }
-
-        function getFilteredRecords() {
-            if (!allData) return [];
-            const startDate = getDateRange();
-            return allData.records.filter(record => {
-                const recordDate = new Date(record.date);
-                recordDate.setHours(0, 0, 0, 0);
-                return recordDate >= startDate;
-            });
+            document.getElementById('high-scores').innerHTML = html || '<div class="empty-state"><div class="empty-state-text">No data</div></div>';
         }
 
         function renderGameHighlights(data) {
             const filteredRecords = getFilteredRecords();
-            const gameIcons = {
-                'Wordle': '📖',
-                'TimeGuessr': '🌍',
-                'Loldle': '🎮',
-                'Maptap': '🗺️'
-            };
-
             const gameHighlights = {};
             GAMES.forEach(game => {
                 gameHighlights[game] = { score: null, player: null };
@@ -1265,10 +1046,9 @@
                 if (!highlight.score) return '';
                 return `
                     <div class="game-highlight-card">
-                        <div class="game-icon">${gameIcons[game]}</div>
                         <div class="game-name">${game}</div>
                         <div class="game-best-score">${highlight.score}</div>
-                        <div class="game-best-player">🏆 ${highlight.player}</div>
+                        <div class="game-best-player">${highlight.player}</div>
                     </div>
                 `;
             }).join('');
@@ -1278,8 +1058,6 @@
 
         function renderStats(data) {
             const filteredRecords = getFilteredRecords();
-
-            // Recalculate scores for the time period
             const periodScores = {};
             PARTICIPANTS.forEach(p => { periodScores[p] = 0; });
 
@@ -1315,11 +1093,6 @@
                 }).length
             })).filter(p => p.games > 0);
 
-            sorted.forEach(p => {
-                p.average = p.games > 0 ? (p.points / p.games).toFixed(1) : '0';
-            });
-
-            // Sort
             sorted.sort((a, b) => {
                 let aVal = a[sortColumn];
                 let bVal = b[sortColumn];
@@ -1331,16 +1104,20 @@
                 return sortDir === 'asc' ? aVal - bVal : bVal - aVal;
             });
 
+            sorted.forEach(p => {
+                p.average = p.games > 0 ? (p.points / p.games).toFixed(1) : '0';
+            });
+
             const html = sorted.map(p => `
                 <tr>
                     <td class="player-cell">${p.name}</td>
                     <td class="points-cell">${p.points}</td>
-                    <td class="avg-cell">${p.average}</td>
-                    <td class="games-cell">${p.games}</td>
+                    <td>${p.average}</td>
+                    <td>${p.games}</td>
                 </tr>
             `).join('');
 
-            document.getElementById('stats-body').innerHTML = html || '<tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--text-secondary);">No data</td></tr>';
+            document.getElementById('stats-body').innerHTML = html || '<tr><td colspan="4" style="text-align: center; padding: 40px; color: #808080;">No data</td></tr>';
         }
 
         function renderHistory(data) {
@@ -1352,7 +1129,7 @@
             const html = filtered.map(record => {
                 const scoreHtml = PARTICIPANTS.map(p => {
                     const score = record.scores[p];
-                    if (score === null) return '<span style="color: var(--text-secondary);">—</span>';
+                    if (score === null) return '<span style="color: #808080;">—</span>';
                     return `<span class="score-badge">${p}: ${score}</span>`;
                 }).join(' ');
 
@@ -1365,7 +1142,7 @@
                 `;
             }).join('');
 
-            document.getElementById('history-body').innerHTML = html || '<tr><td colspan="3" style="text-align: center; padding: 40px; color: var(--text-secondary);">No games</td></tr>';
+            document.getElementById('history-body').innerHTML = html || '<tr><td colspan="3" style="text-align: center; padding: 40px; color: #808080;">No games</td></tr>';
         }
 
         function updateSortUI() {
@@ -1390,7 +1167,7 @@
                 return;
             }
 
-            msgDiv.innerHTML = '<div class="form-message loading">⏳ Parsing with AI...</div>';
+            msgDiv.innerHTML = '<div class="form-message loading">Parsing...</div>';
 
             try {
                 const response = await fetch(VERCEL_API, {
@@ -1408,7 +1185,7 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    msgDiv.innerHTML = '<div class="form-message success">✅ Saved successfully!</div>';
+                    msgDiv.innerHTML = '<div class="form-message success">Saved!</div>';
                     setTimeout(() => {
                         closeModal();
                         loadData();
@@ -1417,7 +1194,7 @@
                     throw new Error(result.error || 'Unknown error');
                 }
             } catch (error) {
-                msgDiv.innerHTML = `<div class="form-message error">❌ Error: ${error.message}</div>`;
+                msgDiv.innerHTML = `<div class="form-message error">Error: ${error.message}</div>`;
             }
         }
 
