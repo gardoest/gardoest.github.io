@@ -528,11 +528,10 @@
         // Set today's date as default
         document.getElementById('input-date').valueAsDate = new Date();
 
-        // Load webhook URL from localStorage
-        const savedWebhook = localStorage.getItem('webhookUrl');
-        if (savedWebhook) {
-            document.getElementById('webhook-url').value = savedWebhook;
-        }
+        // Load webhook URL from localStorage or use default
+        const defaultWebhook = 'https://script.google.com/macros/s/AKfycbwo8mFYypq3-7fHLkwj8vv4uC7yYE-VxTYa1IU9n15yCw-9Xgl6Ds-qI6ZxuhzDB14/exec';
+        const savedWebhook = localStorage.getItem('webhookUrl') || defaultWebhook;
+        document.getElementById('webhook-url').value = savedWebhook;
 
         // Save webhook URL on change
         document.getElementById('webhook-url').addEventListener('change', (e) => {
