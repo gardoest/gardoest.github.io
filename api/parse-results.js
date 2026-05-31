@@ -34,12 +34,18 @@ export default async function handler(req, res) {
       messages: [
         {
           role: "user",
-          content: `Extract game scores from this text. Return JSON with only the game name and score. Games: Wordle (extract the number from "X/6"), Loldle (extract "in X shots"), TimeGuessr (extract score before /50000), Maptap (extract "Final score: X").
+          content: `Extract game scores from this text. Return JSON with only the game name and score.
+
+Games to extract:
+- Wordle: extract the number from "X/6" (e.g., "5/6" → 5)
+- Loldle: extract the number from "Classic: X" or "in X shots" (ONLY Classic mode counts)
+- TimeGuessr: extract score before /50000 (e.g., "36672/50000" → 36672)
+- Maptap: extract "Final score: X"
 
 Text: "${text}"
 
 Return ONLY valid JSON like:
-{"games": {"Wordle": 5, "Loldle": 13, "TimeGuessr": 32222, "Maptap": 954}}
+{"games": {"Wordle": 5, "Loldle": 2, "TimeGuessr": 36672, "Maptap": 954}}
 
 If a game is not found, omit it. Return ONLY the JSON, no other text.`,
         },
