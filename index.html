@@ -956,14 +956,27 @@
         const VERCEL_API = 'https://gardoest-github-io.vercel.app/api/parse-results';
 
         const PARTICIPANTS = ['Gard', 'Jone', 'Elias', 'Herman', 'Sindre'];
-        const GAMES = ['Wordle', 'Timeguessr', 'Loldle', 'Maptap'];
+        const GAMES = ['Wordle', 'TimeGuessr', 'Loldle', 'Maptap'];
 
         const GAME_RULES = {
             'Wordle': { type: 'lowest' },
-            'Timeguessr': { type: 'highest' },
+            'TimeGuessr': { type: 'highest' },
             'Loldle': { type: 'lowest' },
             'Maptap': { type: 'highest' }
         };
+
+        // Normalize game names to standard format
+        function normalizeGameName(name) {
+            const normalized = {
+                'timeguessr': 'TimeGuessr',
+                'time guessr': 'TimeGuessr',
+                'wordle': 'Wordle',
+                'loldle': 'Loldle',
+                'maptap': 'Maptap',
+                'map tap': 'Maptap'
+            };
+            return normalized[name.toLowerCase().trim()] || name;
+        }
 
         let currentTab = 'daily';
         let currentFilter = 'all';
@@ -1082,7 +1095,7 @@
 
                 const record = {
                     date: cells[0],
-                    game: cells[1],
+                    game: normalizeGameName(cells[1]),
                     scores: {}
                 };
 
@@ -1136,7 +1149,7 @@
             PARTICIPANTS.forEach(p => { periodScores[p] = 0; });
 
             filteredRecords.forEach(record => {
-                const game = record.game.trim();
+                const game = normalizeGameName(record.game);
                 const participants = PARTICIPANTS.filter(p => record.scores[p] !== null);
 
                 if (participants.length === 0) return;
@@ -1223,7 +1236,7 @@
             });
 
             filteredRecords.forEach(record => {
-                const game = record.game.trim();
+                const game = normalizeGameName(record.game);
                 if (!GAMES.includes(game)) return;
 
                 const rule = GAME_RULES[game];
@@ -1271,7 +1284,7 @@
             PARTICIPANTS.forEach(p => { periodScores[p] = 0; });
 
             filteredRecords.forEach(record => {
-                const game = record.game.trim();
+                const game = normalizeGameName(record.game);
                 const participants = PARTICIPANTS.filter(p => record.scores[p] !== null);
 
                 if (participants.length === 0) return;
