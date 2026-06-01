@@ -1223,10 +1223,36 @@
                 }
 
                 const pointsPerPlace = participants.length;
-                sorted.forEach((player, idx) => {
-                    const points = pointsPerPlace - idx;
-                    periodScores[player] += points;
-                });
+
+                // Handle ties: group players with same score and split points
+                let idx = 0;
+                while (idx < sorted.length) {
+                    const currentScore = record.scores[sorted[idx]];
+                    const tiedPlayers = [sorted[idx]];
+
+                    // Find all players tied with current score
+                    let j = idx + 1;
+                    while (j < sorted.length && record.scores[sorted[j]] === currentScore) {
+                        tiedPlayers.push(sorted[j]);
+                        j++;
+                    }
+
+                    // Calculate average points for tied players
+                    const startPlace = idx;
+                    const endPlace = idx + tiedPlayers.length - 1;
+                    let totalPoints = 0;
+                    for (let p = startPlace; p <= endPlace; p++) {
+                        totalPoints += (pointsPerPlace - p);
+                    }
+                    const avgPoints = totalPoints / tiedPlayers.length;
+
+                    // Assign average points to all tied players
+                    tiedPlayers.forEach(player => {
+                        periodScores[player] += avgPoints;
+                    });
+
+                    idx = j;
+                }
             });
 
             const sorted = PARTICIPANTS.sort((a, b) => periodScores[b] - periodScores[a]);
@@ -1318,10 +1344,36 @@
                 }
 
                 const pointsPerPlace = participants.length;
-                sorted.forEach((player, idx) => {
-                    const points = pointsPerPlace - idx;
-                    periodScores[player] += points;
-                });
+
+                // Handle ties: group players with same score and split points
+                let idx = 0;
+                while (idx < sorted.length) {
+                    const currentScore = record.scores[sorted[idx]];
+                    const tiedPlayers = [sorted[idx]];
+
+                    // Find all players tied with current score
+                    let j = idx + 1;
+                    while (j < sorted.length && record.scores[sorted[j]] === currentScore) {
+                        tiedPlayers.push(sorted[j]);
+                        j++;
+                    }
+
+                    // Calculate average points for tied players
+                    const startPlace = idx;
+                    const endPlace = idx + tiedPlayers.length - 1;
+                    let totalPoints = 0;
+                    for (let p = startPlace; p <= endPlace; p++) {
+                        totalPoints += (pointsPerPlace - p);
+                    }
+                    const avgPoints = totalPoints / tiedPlayers.length;
+
+                    // Assign average points to all tied players
+                    tiedPlayers.forEach(player => {
+                        periodScores[player] += avgPoints;
+                    });
+
+                    idx = j;
+                }
             });
 
             const sorted = PARTICIPANTS.map(p => ({
