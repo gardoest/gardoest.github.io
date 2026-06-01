@@ -307,6 +307,21 @@
             font-size: 16px;
         }
 
+        /* Chart */
+        .chart-container {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+            border: 2px solid;
+            border-image: linear-gradient(135deg, #ffffff 0%, #808080 100%) 1;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 50px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-container canvas {
+            max-height: 400px;
+        }
+
         /* Game History */
         .history-section {
             margin-top: 40px;
@@ -661,6 +676,7 @@
             line-height: 1.5;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="app-container">
@@ -692,6 +708,12 @@
                     <div class="empty-state">
                         <div class="empty-state-text">Loading...</div>
                     </div>
+                </div>
+
+                <!-- All-Time Chart -->
+                <div id="chart-container" class="chart-container" style="display: none;">
+                    <h3 class="section-title">All-Time Points Progression</h3>
+                    <canvas id="alltime-chart"></canvas>
                 </div>
 
                 <!-- Stats Table -->
@@ -1029,8 +1051,154 @@
             if (!allData) return;
             renderHighScores(allData);
             renderGameHighlights(allData);
+            if (currentTab === 'alltime') {
+                renderChart(allData);
+            }
             renderStats(allData);
             renderHistory(allData);
+        }
+
+        function renderChart(data) {
+            const container = document.getElementById('chart-container');
+            const canvas = document.getElementById('alltime-chart');
+
+            if (!data.records || data.records.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            // Calculate cumulative points over time
+            const dates = {};
+            const cumulativeByPlayer = {};
+            PARTICIPANTS.forEach(p => { cumulativeByPlayer[p] = []; });
+
+            // Sort records by date
+            const sortedRecords = [...data.records].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            // Initialize cumulative scores
+            const cumulativeScores = {};
+            PARTICIPANTS.forEach(p => { cumulativeScores[p] = 0; });
+
+            // Process each unique date
+            sortedRecords.forEach(record => {
+                if (!dates[record.date]) {
+                    dates[record.date] = true;
+                }
+            });
+
+            const sortedDates = Object.keys(dates).sort();
+
+            // Recalculate cumulative scores at each date
+            sortedDates.forEach(date => {
+                const dayRecords = sortedRecords.filter(r => r.date === date);
+
+                dayRecords.forEach(record => {
+                    const game = record.game.trim();
+                    const participants = PARTICIPANTS.filter(p => record.scores[p] !== null);
+
+                    if (participants.length > 0) {
+                        const rule = GAME_RULES[game];
+                        if (rule) {
+                            let sorted;
+                            if (rule.type === 'lowest') {
+                                sorted = participants.sort((a, b) => record.scores[a] - record.scores[b]);
+                            } else {
+                                sorted = participants.sort((a, b) => record.scores[b] - record.scores[a]);
+                            }
+
+                            const pointsPerPlace = participants.length;
+                            let idx = 0;
+                            while (idx < sorted.length) {
+                                const currentScore = record.scores[sorted[idx]];
+                                const tiedPlayers = [sorted[idx]];
+                                let j = idx + 1;
+                                while (j < sorted.length && record.scores[sorted[j]] === currentScore) {
+                                    tiedPlayers.push(sorted[j]);
+                                    j++;
+                                }
+
+                                const startPlace = idx;
+                                const endPlace = idx + tiedPlayers.length - 1;
+                                let totalPoints = 0;
+                                for (let p = startPlace; p <= endPlace; p++) {
+                                    totalPoints += (pointsPerPlace - p);
+                                }
+                                const avgPoints = totalPoints / tiedPlayers.length;
+
+                                tiedPlayers.forEach(player => {
+                                    cumulativeScores[player] += avgPoints;
+                                });
+
+                                idx = j;
+                            }
+                        }
+                    }
+                });
+
+                PARTICIPANTS.forEach(p => {
+                    cumulativeByPlayer[p].push(cumulativeScores[p]);
+                });
+            });
+
+            // Define colors for each player
+            const playerColors = {
+                'Gard': 'rgb(59, 130, 246)',      // Blue
+                'Jone': 'rgb(239, 68, 68)',       // Red
+                'Elias': 'rgb(34, 197, 94)',      // Green
+                'Herman': 'rgb(251, 191, 36)',    // Yellow
+                'Sindre': 'rgb(168, 85, 247)'     // Purple
+            };
+
+            const datasets = PARTICIPANTS.map(player => ({
+                label: player,
+                data: cumulativeByPlayer[player],
+                borderColor: playerColors[player],
+                backgroundColor: playerColors[player] + '20',
+                tension: 0.4,
+                fill: false,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                borderWidth: 2
+            }));
+
+            // Destroy existing chart if it exists
+            if (window.alltimeChart) {
+                window.alltimeChart.destroy();
+            }
+
+            // Create new chart
+            const ctx = canvas.getContext('2d');
+            window.alltimeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedDates,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#ffffff',
+                                font: { size: 13, weight: '600' }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#808080' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#808080' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+
+            container.style.display = 'block';
         }
 
         function renderHighScores(data) {
