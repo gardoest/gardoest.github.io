@@ -1480,11 +1480,10 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    msgDiv.innerHTML = '<div class="form-message success">Saved!</div>';
+                    msgDiv.innerHTML = '<div class="form-message success">Saved! Refreshing...</div>';
                     setTimeout(() => {
-                        closeModal();
-                        loadData();
-                    }, 5000);
+                        window.location.reload();
+                    }, 1500);
                 } else {
                     throw new Error(result.error || 'Unknown error');
                 }

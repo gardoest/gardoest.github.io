@@ -740,11 +740,10 @@ async function submitScore(e) {
         const result = await response.json();
 
         if (result.success) {
-            if (msgDiv) msgDiv.innerHTML = '<div class="form-message success">Saved!</div>';
+            if (msgDiv) msgDiv.innerHTML = '<div class="form-message success">Saved! Refreshing...</div>';
             setTimeout(() => {
-                closeModal();
-                loadData();
-            }, 5000);
+                window.location.reload();
+            }, 1500);
         } else {
             throw new Error(result.error || 'Unknown error');
         }
