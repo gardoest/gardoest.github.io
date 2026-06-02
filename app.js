@@ -8,8 +8,12 @@
 // CONFIGURATION & CONSTANTS
 // ============================================================================
 const SHEET_ID = '13vdyTKv0vgLBnihxBFeriKzkNbvOt1A3n-c3h5ur8g4';
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
 const VERCEL_API = 'https://gardoest-github-io.vercel.app/api/parse-results';
+
+// Function to get CSV URL with cache-buster
+function getCSVUrl() {
+    return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0&t=${Date.now()}`;
+}
 
 // Game participants
 const PARTICIPANTS = ['Gard', 'Jone', 'Elias', 'Herman', 'Sindre'];
@@ -44,7 +48,7 @@ let sortDir = 'desc';               // Sort direction: asc or desc
  */
 async function loadData() {
     try {
-        const response = await fetch(CSV_URL);
+        const response = await fetch(getCSVUrl());
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const csv = await response.text();
