@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DLE Tracker - Deep Space</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background: #0a0e27;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            image-rendering: auto;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            padding-top: 80px;
+            min-height: 200vh;
+        }
+
+        .chart-section {
+            margin-top: 200px;
+            margin-bottom: 100px;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .chart-title {
+            font-size: 28px;
+            color: #d4af37;
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .chart-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            height: 400px;
+            padding: 30px;
+            background: rgba(26, 10, 58, 0.6);
+            backdrop-filter: blur(10px);
+            border: 2px solid #9d4edd;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(157, 78, 221, 0.3);
+        }
+
+        canvas.chart-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .leaderboard-container {
+            text-align: center;
+            margin-bottom: 100px;
+            position: relative;
+        }
+
+        .leaderboard-title {
+            font-size: 42px;
+            color: #d4af37;
+            letter-spacing: 3px;
+            margin-bottom: 60px;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+            font-weight: bold;
+        }
+
+        .carousel-container {
+            height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 0 60px;
+            perspective: 1200px;
+        }
+
+        .cards-wrapper {
+            position: relative;
+            width: 200px;
+            height: 320px;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .card-container {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -90px;
+            margin-top: -150px;
+            width: 180px;
+            height: 300px;
+            transform-style: preserve-3d;
+            opacity: 0.15;
+            transform: translate(0, 0) scale(0.7);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            pointer-events: auto;
+            z-index: 1;
+            cursor: pointer;
+        }
+
+        .card-container.active {
+            opacity: 1;
+            transform: translate(0, 0) scale(1);
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        .card-container:nth-child(2) {
+            transform: translateX(140px) scale(0.5) translateZ(-100px);
+            opacity: 0.15;
+        }
+
+        .card-container:nth-child(4) {
+            transform: translateX(-140px) scale(0.5) translateZ(-100px);
+            opacity: 0.15;
+        }
+
+        .card-container:nth-child(3) {
+            transform: translateY(-160px) scale(0.5) translateZ(-100px);
+            opacity: 0.15;
+        }
+
+        .card-container:nth-child(5) {
+            transform: translateY(160px) scale(0.5) translateZ(-100px);
+            opacity: 0.15;
+        }
+
+        .card-container.active ~ .card-container,
+        .card-container.active {
+            pointer-events: auto;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            border: 2px solid #9d4edd;
+            background: rgba(26, 10, 58, 0.85);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(157, 78, 221, 0.4);
+            padding: 15px;
+        }
+
+        .card-front {
+            color: #e8e8f0;
+        }
+
+        .card-front:hover {
+            border-color: #d4af37;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.6);
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            border-color: #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 35px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Aktiv kort styling */
+        .card-container.active .card-front,
+        .card-container.active .card-back {
+            border-width: 3px;
+            border-color: #d4af37;
+            background: rgba(212, 175, 55, 0.12);
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.7);
+        }
+
+        .rank-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #d4af37;
+            margin-bottom: 8px;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        }
+
+        .player-name {
+            font-size: 14px;
+            color: #e8e8f0;
+            margin-bottom: 12px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .score {
+            font-size: 28px;
+            font-weight: bold;
+            color: #d4af37;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Navigation buttons */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #d4af37;
+            font-size: 40px;
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            z-index: 5;
+        }
+
+        .carousel-nav:hover {
+            color: #9d4edd;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        .carousel-nav.prev {
+            left: 0;
+        }
+
+        .carousel-nav.next {
+            right: 0;
+        }
+
+        .carousel-nav:active {
+            transform: translateY(-50%) scale(0.9);
+        }
+
+        @media (max-width: 768px) {
+            .leaderboard-title {
+                font-size: 28px;
+            }
+
+            .cards-wrapper {
+                gap: 15px;
+            }
+
+            .card-container {
+                width: 110px;
+                height: 220px;
+            }
+
+            .rank-number {
+                font-size: 22px;
+            }
+
+            .player-name {
+                font-size: 12px;
+            }
+
+            .score {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="starfield"></canvas>
+
+    <div class="content">
+        <div class="leaderboard-container">
+            <div class="leaderboard-title">🏆 LIVE RANKING 🏆</div>
+            <div class="carousel-container">
+                <div class="cards-wrapper" id="cardsWrapper">
+                <div class="card-container">
+                    <div class="card card-1">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <div class="rank-number">1</div>
+                                <div class="player-name">Player A</div>
+                                <div class="score">245</div>
+                            </div>
+                            <div class="card-back">
+                                <div class="rank-number">1</div>
+                                <div class="player-name">Player A</div>
+                                <div class="score">245</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-container">
+                    <div class="card card-2">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <div class="rank-number">2</div>
+                                <div class="player-name">Player B</div>
+                                <div class="score">238</div>
+                            </div>
+                            <div class="card-back">
+                                <div class="rank-number">2</div>
+                                <div class="player-name">Player B</div>
+                                <div class="score">238</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-container">
+                    <div class="card card-3">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <div class="rank-number">🏆</div>
+                                <div class="player-name">Player C</div>
+                                <div class="score">230</div>
+                            </div>
+                            <div class="card-back">
+                                <div class="rank-number">3</div>
+                                <div class="player-name">Player C</div>
+                                <div class="score">230</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-container">
+                    <div class="card card-4">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <div class="rank-number">4</div>
+                                <div class="player-name">Player D</div>
+                                <div class="score">215</div>
+                            </div>
+                            <div class="card-back">
+                                <div class="rank-number">4</div>
+                                <div class="player-name">Player D</div>
+                                <div class="score">215</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-container">
+                    <div class="card card-5">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <div class="rank-number">5</div>
+                                <div class="player-name">Player E</div>
+                                <div class="score">198</div>
+                            </div>
+                            <div class="card-back">
+                                <div class="rank-number">5</div>
+                                <div class="player-name">Player E</div>
+                                <div class="score">198</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <div class="chart-title">📈 ALL-TIME PROGRESSION 📈</div>
+            <div class="chart-container">
+                <canvas id="chartCanvas" class="chart-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class StarField {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d', { alpha: true, willReadFrequently: false });
+                this.ctx.imageSmoothingEnabled = true;
+                this.ctx.imageSmoothingQuality = 'high';
+
+                this.stars = { near: [], mid: [], far: [] };
+                this.particles = [];
+                this.nebulas = [];
+
+                this.time = 0;
+                this.resize();
+                this.generateNebulas();
+                this.generateStars();
+
+                // Generer initiale kometer
+                for (let i = 0; i < 2; i++) {
+                    this.generateComets();
+                }
+
+                this.animate();
+
+                window.addEventListener('resize', () => this.resize());
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            generateNebulas() {
+                // Lage nebula/tåke-effekter for dybde
+                this.nebulas = [
+                    {
+                        x: this.canvas.width * 0.3,
+                        y: this.canvas.height * 0.3,
+                        radius: 400,
+                        color: '#9d4edd',
+                        opacity: 0.08
+                    },
+                    {
+                        x: this.canvas.width * 0.7,
+                        y: this.canvas.height * 0.6,
+                        radius: 500,
+                        color: '#d4af37',
+                        opacity: 0.05
+                    },
+                    {
+                        x: this.canvas.width * 0.5,
+                        y: this.canvas.height * 0.8,
+                        radius: 450,
+                        color: '#9d4edd',
+                        opacity: 0.06
+                    }
+                ];
+            }
+
+            generateStars() {
+                // Fjerne stjerner (bakgrunn) - beveger seg saktere
+                for (let i = 0; i < 300; i++) {
+                    this.stars.far.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        radius: Math.random() * 0.3 + 0.1,
+                        opacity: Math.random() * 0.15 + 0.05,
+                        twinkleSpeed: Math.random() * 0.01 + 0.002,
+                        twinklePhase: Math.random() * Math.PI * 2,
+                        color: '#ffffff',
+                        parallaxFactor: 0.1
+                    });
+                }
+
+                // Midtstjerner
+                for (let i = 0; i < 180; i++) {
+                    const rnd = Math.random();
+                    let color = '#ffffff';
+                    if (rnd > 0.82) color = '#d4af37';
+                    else if (rnd > 0.64) color = '#9d4edd';
+
+                    this.stars.mid.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        radius: Math.random() * 0.8 + 0.3,
+                        opacity: Math.random() * 0.4 + 0.25,
+                        twinkleSpeed: Math.random() * 0.025 + 0.008,
+                        twinklePhase: Math.random() * Math.PI * 2,
+                        color: color,
+                        parallaxFactor: 0.3
+                    });
+                }
+
+                // Nære stjerner (foran) - større og lysere
+                for (let i = 0; i < 120; i++) {
+                    const rnd = Math.random();
+                    let color = '#ffffff';
+                    if (rnd > 0.8) color = '#d4af37';
+                    else if (rnd > 0.6) color = '#9d4edd';
+
+                    this.stars.near.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        radius: Math.random() * 1.5 + 0.6,
+                        opacity: Math.random() * 0.7 + 0.3,
+                        twinkleSpeed: Math.random() * 0.04 + 0.015,
+                        twinklePhase: Math.random() * Math.PI * 2,
+                        color: color,
+                        parallaxFactor: 0.8
+                    });
+                }
+            }
+
+            generateComets() {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 0.3 + 0.15;
+
+                this.particles.push({
+                    x: Math.random() * this.canvas.width,
+                    y: Math.random() * this.canvas.height,
+                    vx: Math.cos(angle),
+                    vy: Math.sin(angle),
+                    radius: Math.random() * 2 + 1.2,
+                    opacity: 0.8,
+                    trail: [],
+                    isComet: true,
+                    speed: speed,
+                    age: 0
+                });
+            }
+
+            drawBackground() {
+                // Dyp space gradient med flere lag
+                const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+                gradient.addColorStop(0, '#050710');
+                gradient.addColorStop(0.3, '#0a0e27');
+                gradient.addColorStop(0.5, '#1a0a3a');
+                gradient.addColorStop(0.8, '#0f0b2a');
+                gradient.addColorStop(1, '#070a1e');
+
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+
+            drawNebulas() {
+                // Tegn nebula-tåker for dybde
+                this.nebulas.forEach(nebula => {
+                    const gradient = this.ctx.createRadialGradient(
+                        nebula.x, nebula.y, 0,
+                        nebula.x, nebula.y, nebula.radius
+                    );
+                    gradient.addColorStop(0, nebula.color);
+                    gradient.addColorStop(0.5, nebula.color);
+                    gradient.addColorStop(1, 'transparent');
+
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.globalAlpha = nebula.opacity;
+                    this.ctx.beginPath();
+                    this.ctx.arc(nebula.x, nebula.y, nebula.radius, 0, Math.PI * 2);
+                    this.ctx.fill();
+                });
+                this.ctx.globalAlpha = 1;
+            }
+
+            drawStarLayer(stars, includeGlow = false) {
+                stars.forEach(star => {
+                    // Twinkling med sinusbølge
+                    star.twinklePhase += star.twinkleSpeed;
+                    const twinkle = Math.sin(star.twinklePhase);
+                    const opacity = star.opacity + twinkle * 0.5;
+
+                    // Tegn stjerne med blur-effekt (softere)
+                    this.ctx.fillStyle = star.color;
+                    this.ctx.globalAlpha = Math.max(0, Math.min(1, opacity));
+                    this.ctx.beginPath();
+                    this.ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    this.ctx.fill();
+
+                    // Glow omkring større stjerner
+                    if (includeGlow && star.radius > 0.6) {
+                        const glowSize = star.radius * 2.5;
+                        const glowGradient = this.ctx.createRadialGradient(
+                            star.x, star.y, 0,
+                            star.x, star.y, glowSize
+                        );
+                        glowGradient.addColorStop(0, star.color);
+                        glowGradient.addColorStop(1, 'transparent');
+
+                        this.ctx.fillStyle = glowGradient;
+                        this.ctx.globalAlpha = opacity * 0.15;
+                        this.ctx.beginPath();
+                        this.ctx.arc(star.x, star.y, glowSize, 0, Math.PI * 2);
+                        this.ctx.fill();
+                    }
+                });
+                this.ctx.globalAlpha = 1;
+            }
+
+            drawComets() {
+                this.particles = this.particles.filter(comet => {
+                    if (comet.isComet) {
+                        comet.age++;
+                        comet.x += comet.vx * comet.speed;
+                        comet.y += comet.vy * comet.speed;
+
+                        // Fade out når den blir gammel
+                        const fadeout = Math.max(0, 1 - comet.age / 500);
+
+                        // Trail
+                        comet.trail.push({
+                            x: comet.x,
+                            y: comet.y,
+                            opacity: comet.opacity * fadeout
+                        });
+
+                        if (comet.trail.length > 60) {
+                            comet.trail.shift();
+                        }
+
+                        // Tegn trail med gradient
+                        comet.trail.forEach((point, idx) => {
+                            const trailFade = idx / comet.trail.length;
+                            this.ctx.fillStyle = '#d4af37';
+                            this.ctx.globalAlpha = trailFade * 0.3 * fadeout;
+                            this.ctx.beginPath();
+                            this.ctx.arc(point.x, point.y, comet.radius * (1 - trailFade * 0.7), 0, Math.PI * 2);
+                            this.ctx.fill();
+                        });
+
+                        // Komet kjerne - hvit med blå/purpur tint
+                        this.ctx.fillStyle = '#ffffff';
+                        this.ctx.globalAlpha = comet.opacity * fadeout;
+                        this.ctx.beginPath();
+                        this.ctx.arc(comet.x, comet.y, comet.radius, 0, Math.PI * 2);
+                        this.ctx.fill();
+
+                        // Indre glow (blå)
+                        const innerGlow = this.ctx.createRadialGradient(
+                            comet.x, comet.y, 0,
+                            comet.x, comet.y, comet.radius * 1.5
+                        );
+                        innerGlow.addColorStop(0, '#9d4edd');
+                        innerGlow.addColorStop(1, 'transparent');
+                        this.ctx.fillStyle = innerGlow;
+                        this.ctx.globalAlpha = 0.4 * fadeout;
+                        this.ctx.beginPath();
+                        this.ctx.arc(comet.x, comet.y, comet.radius * 1.5, 0, Math.PI * 2);
+                        this.ctx.fill();
+
+                        // Ytre glow (gull)
+                        const outerGlow = this.ctx.createRadialGradient(
+                            comet.x, comet.y, comet.radius,
+                            comet.x, comet.y, comet.radius * 5
+                        );
+                        outerGlow.addColorStop(0, '#d4af37');
+                        outerGlow.addColorStop(1, 'transparent');
+                        this.ctx.fillStyle = outerGlow;
+                        this.ctx.globalAlpha = 0.25 * fadeout;
+                        this.ctx.beginPath();
+                        this.ctx.arc(comet.x, comet.y, comet.radius * 5, 0, Math.PI * 2);
+                        this.ctx.fill();
+
+                        // Fjern hvis helt utenfor eller for gammel
+                        return (comet.x > -100 && comet.x < this.canvas.width + 100 &&
+                                comet.y > -100 && comet.y < this.canvas.height + 100 &&
+                                comet.age < 500);
+                    }
+                    return false;
+                });
+
+                // Generer nye kometer tilfeldig
+                if (Math.random() < 0.0006) {
+                    this.generateComets();
+                }
+
+                this.ctx.globalAlpha = 1;
+            }
+
+            animate = () => {
+                this.time++;
+
+                // Tegn bakgrunn og effekter
+                this.drawBackground();
+                this.drawNebulas();
+
+                // Tegn stjerner i lag (bakgrunn til forgrunn) for 3D-effekt
+                this.drawStarLayer(this.stars.far, false);
+                this.drawStarLayer(this.stars.mid, true);
+                this.drawComets();
+                this.drawStarLayer(this.stars.near, true);
+
+                requestAnimationFrame(this.animate);
+            }
+        }
+
+        // CAROUSEL LOGIC
+        let currentCardIndex = 0;
+        const cardsData = [
+            { rank: 1, name: 'Gard', score: 245 },
+            { rank: 2, name: 'Jone', score: 238 },
+            { rank: 3, name: 'Elias', score: 230 },
+            { rank: 4, name: 'Herman', score: 215 },
+            { rank: 5, name: 'Sindre', score: 198 }
+        ];
+
+        function initCarousel() {
+            const wrapper = document.getElementById('cardsWrapper');
+            wrapper.innerHTML = '';
+
+            cardsData.forEach((card, idx) => {
+                const container = document.createElement('div');
+                container.className = 'card-container' + (idx === 0 ? ' active' : '');
+                container.id = `card-${idx}`;
+                container.onclick = () => selectCard(idx);
+
+                const cardHtml = `
+                    <div class="card">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <div class="rank-number">${card.rank}</div>
+                                <div class="player-name">${card.name}</div>
+                                <div class="score">${card.score}</div>
+                            </div>
+                            <div class="card-back">
+                                <div class="rank-number">${card.rank}</div>
+                                <div class="player-name">${card.name}</div>
+                                <div class="score">${card.score}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                container.innerHTML = cardHtml;
+                wrapper.appendChild(container);
+            });
+        }
+
+        function rotateCarousel(direction) {
+            currentCardIndex = (currentCardIndex + direction + cardsData.length) % cardsData.length;
+            updateCarousel();
+        }
+
+        function selectCard(index) {
+            if (index !== currentCardIndex) {
+                currentCardIndex = index;
+                updateCarousel();
+            }
+        }
+
+        function updateCarousel() {
+            document.querySelectorAll('.card-container').forEach((el, idx) => {
+                const isActive = idx === currentCardIndex;
+                el.classList.toggle('active', isActive);
+
+                if (isActive) {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translate(0, 0) scale(1) translateZ(0)';
+                    el.style.zIndex = '10';
+                } else {
+                    // Beregn posisjon i sirkelen for bakgrunnkortene
+                    const relativeIndex = (idx - currentCardIndex + cardsData.length) % cardsData.length;
+                    let x = 0, y = 0, opacity = 0.15, z = -100;
+
+                    if (relativeIndex === 1 || relativeIndex === 4) {
+                        x = relativeIndex === 1 ? 140 : -140;
+                        opacity = 0.15;
+                    } else if (relativeIndex === 2) {
+                        y = -160;
+                        opacity = 0.15;
+                    } else if (relativeIndex === 3) {
+                        y = 160;
+                        opacity = 0.15;
+                    }
+
+                    el.style.opacity = opacity.toString();
+                    el.style.transform = `translateX(${x}px) translateY(${y}px) scale(0.5) translateZ(${z}px)`;
+                    el.style.zIndex = '1';
+                }
+            });
+        }
+
+        // CHART LOGIC
+        const playerColors = {
+            'Gard': '#d4af37',      // Gull
+            'Jone': '#9d4edd',      // Purpur
+            'Elias': '#00d9ff',     // Cyan
+            'Herman': '#ff6b9d',    // Rosa
+            'Sindre': '#50fa7b'     // Grønn
+        };
+
+        const chartData = {
+            dates: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'],
+            players: {
+                'Gard': [10, 25, 45, 62, 85, 105, 128, 152, 175, 198, 220, 235, 243, 245],
+                'Jone': [8, 22, 40, 58, 78, 98, 118, 135, 155, 172, 190, 210, 228, 238],
+                'Elias': [5, 18, 35, 52, 70, 88, 108, 125, 142, 160, 180, 200, 215, 230],
+                'Herman': [3, 15, 30, 48, 65, 82, 100, 115, 132, 150, 168, 185, 205, 215],
+                'Sindre': [2, 10, 25, 42, 60, 75, 92, 110, 128, 145, 162, 178, 190, 198]
+            }
+        };
+
+        function initChart() {
+            const canvas = document.getElementById('chartCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+
+            // Set canvas size
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+
+            drawChart(ctx, canvas);
+        }
+
+        function drawChart(ctx, canvas) {
+            const padding = 60;
+            const width = canvas.width - padding * 2;
+            const height = canvas.height - padding * 2;
+
+            // Hent data fra app.js eller bruk dummy-data
+            const data = window.calculateChartData ? window.calculateChartData() : null;
+            const dates = data ? data.dates : chartData.dates;
+            const players = data ? data.playerData : chartData.players;
+
+            // Tegn grid
+            ctx.strokeStyle = 'rgba(212, 175, 55, 0.08)';
+            ctx.lineWidth = 1;
+
+            // Vertikale linjer (dager)
+            for (let i = 0; i <= dates.length; i++) {
+                const x = padding + (i / (dates.length - 1)) * width;
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, canvas.height - padding);
+                ctx.stroke();
+            }
+
+            // Horisontale linjer (poeng)
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (i / 5) * height;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(canvas.width - padding, y);
+                ctx.stroke();
+            }
+
+            // Tegn akser
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, canvas.height - padding);
+            ctx.lineTo(canvas.width - padding, canvas.height - padding);
+            ctx.stroke();
+
+            // Tegn akseetiketter
+            ctx.fillStyle = '#a8aab8';
+            ctx.font = '12px Arial';
+            ctx.globalAlpha = 0.7;
+
+            // X-akselabels (dato)
+            ctx.textAlign = 'center';
+            for (let i = 0; i < dates.length; i += Math.max(1, Math.floor(dates.length / 7))) {
+                const x = padding + (i / (dates.length - 1)) * width;
+                const dateStr = dates[i] ? dates[i].substring(5) : i; // Vis MM-DD eller index
+                ctx.fillText(dateStr, x, canvas.height - padding + 20);
+            }
+
+            // Y-akselabels (poeng)
+            ctx.textAlign = 'right';
+            const maxPoeng = 300; // Standard max
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (1 - i / 5) * height;
+                const value = Math.round((i / 5) * maxPoeng);
+                ctx.fillText(value, padding - 15, y + 5);
+            }
+
+            // Aksetitler
+            ctx.font = 'bold 14px Arial';
+            ctx.fillStyle = '#d4af37';
+
+            // Y-akse tittel
+            ctx.save();
+            ctx.translate(15, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.textAlign = 'center';
+            ctx.fillText('Poeng', 0, 0);
+            ctx.restore();
+
+            // X-akse tittel
+            ctx.textAlign = 'center';
+            ctx.fillText('Dato', canvas.width / 2, canvas.height - 5);
+
+            ctx.globalAlpha = 1;
+
+            // Tegn linjer for hver spiller
+            const playerList = Object.keys(players);
+            playerList.forEach(player => {
+                if (players[player]) {
+                    drawPlayerLine(ctx, canvas, players[player], playerColors[player] || '#ffffff', player);
+                }
+            });
+        }
+
+        function drawPlayerLine(ctx, canvas, data, color, playerName) {
+            const padding = 60;
+            const width = canvas.width - padding * 2;
+            const height = canvas.height - padding * 2;
+            const maxScore = 300;
+
+            if (!data || data.length === 0) return;
+
+            // Tegn linje
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2.5;
+            ctx.globalAlpha = 0.75;
+            ctx.beginPath();
+
+            for (let i = 0; i < data.length; i++) {
+                const x = padding + (i / (data.length - 1)) * width;
+                const y = canvas.height - padding - (data[i] / maxScore) * height;
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+
+            // Tegn punkter
+            ctx.fillStyle = color;
+            ctx.globalAlpha = 0.85;
+            for (let i = 0; i < data.length; i += Math.max(1, Math.floor(data.length / 10))) {
+                const x = padding + (i / (data.length - 1)) * width;
+                const y = canvas.height - padding - (data[i] / maxScore) * height;
+
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.globalAlpha = 1;
+        }
+
+        // Initialiser når siden loader
+        document.addEventListener('DOMContentLoaded', () => {
+            new StarField('starfield');
+            initCarousel();
+            initChart();
+        });
+
+        // Reinit chart on window resize
+        window.addEventListener('resize', () => {
+            initChart();
+        });
+    </script>
+</body>
+</html>
