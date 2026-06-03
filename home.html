@@ -159,60 +159,7 @@
     </div>
 
     <script>
-        const titleText = document.getElementById('titleText');
-        const titleSection = document.getElementById('titleSection');
-        const text = 'FSM-GANG';
-
-        // Create individual letter elements
-        titleText.innerHTML = text.split('').map((letter, idx) =>
-            `<span class="title-letter" data-index="${idx}">${letter}</span>`
-        ).join('');
-
-        const letters = document.querySelectorAll('.title-letter');
-        const magnetRange = 80; // How far from letters the mouse effect triggers
-
-        document.addEventListener('mousemove', (e) => {
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
-
-            letters.forEach((letter, idx) => {
-                const rect = letter.getBoundingClientRect();
-                const letterCenterX = rect.left + rect.width / 2;
-                const letterCenterY = rect.top + rect.height / 2;
-
-                const distX = mouseX - letterCenterX;
-                const distY = mouseY - letterCenterY;
-                const distance = Math.sqrt(distX * distX + distY * distY);
-
-                if (distance < magnetRange) {
-                    // Calculate pull strength based on distance
-                    const strength = (1 - distance / magnetRange) * 0.5;
-                    const pullX = (distX / distance) * strength * 25;
-                    const pullY = (distY / distance) * strength * 25;
-
-                    letter.style.transform = `translate(${pullX}px, ${pullY}px)`;
-                } else {
-                    letter.style.transform = 'translate(0, 0)';
-                }
-            });
-        });
-
-        // Reset on mouse leave
-        document.addEventListener('mouseleave', () => {
-            letters.forEach(letter => {
-                letter.style.transform = 'translate(0, 0)';
-            });
-        });
-
-        // Staggered fade-in animation on load
-        window.addEventListener('load', () => {
-            letters.forEach((letter, idx) => {
-                letter.style.opacity = '0';
-                letter.style.animation = `fadeInSlide 0.6s ease-out ${idx * 0.05}s forwards`;
-            });
-        });
-
-        // Add animation keyframes
+        // Add animation keyframes first
         const style = document.createElement('style');
         style.textContent = `
             @keyframes fadeInSlide {
@@ -227,6 +174,55 @@
             }
         `;
         document.head.appendChild(style);
+
+        const titleText = document.getElementById('titleText');
+        const text = 'FSM-GANG';
+
+        // Create individual letter elements
+        titleText.innerHTML = text.split('').map((letter, idx) =>
+            `<span class="title-letter" data-index="${idx}">${letter}</span>`
+        ).join('');
+
+        const letters = document.querySelectorAll('.title-letter');
+        const magnetRange = 120; // How far from letters the mouse effect triggers
+
+        // Staggered fade-in animation
+        letters.forEach((letter, idx) => {
+            letter.style.animation = `fadeInSlide 0.6s ease-out ${idx * 0.05}s forwards`;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+
+            letters.forEach((letter) => {
+                const rect = letter.getBoundingClientRect();
+                const letterCenterX = rect.left + rect.width / 2;
+                const letterCenterY = rect.top + rect.height / 2;
+
+                const distX = mouseX - letterCenterX;
+                const distY = mouseY - letterCenterY;
+                const distance = Math.sqrt(distX * distX + distY * distY);
+
+                if (distance < magnetRange) {
+                    // Calculate pull strength based on distance
+                    const strength = (1 - distance / magnetRange) * 0.7;
+                    const pullX = (distX / distance) * strength * 30;
+                    const pullY = (distY / distance) * strength * 30;
+
+                    letter.style.transform = `translate(${pullX}px, ${pullY}px)`;
+                } else {
+                    letter.style.transform = 'translate(0, 0)';
+                }
+            });
+        });
+
+        // Reset on mouse leave
+        document.addEventListener('mouseleave', () => {
+            letters.forEach(letter => {
+                letter.style.transform = 'translate(0, 0)';
+            });
+        });
     </script>
 </body>
 </html>
