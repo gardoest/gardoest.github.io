@@ -32,37 +32,34 @@
 
         /* Title */
         .title {
-            position: relative;
-            background: linear-gradient(135deg, rgba(10, 10, 10, 0.7) 0%, rgba(26, 26, 26, 0.7) 100%),
-                        url('banner.avif') center / cover no-repeat;
-            background-blend-mode: overlay;
-            padding: 120px 20px;
+            padding: 40px 20px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
+            gap: 40px;
             border-bottom: 2px solid #ffffff;
-            min-height: 200px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .nav-link {
             color: #ffffff;
             text-decoration: none;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 28px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 8px 16px;
+            letter-spacing: 1px;
+            padding: 12px 32px;
             border: 2px solid #ffffff;
             border-radius: 4px;
             transition: all 0.3s ease;
         }
 
         .nav-link:hover {
+            background: #ffffff;
+            color: #0a0a0a;
+        }
+
+        .nav-link.active {
             background: #ffffff;
             color: #0a0a0a;
         }
@@ -78,18 +75,12 @@
 
         @media (max-width: 768px) {
             .title {
-                padding: 60px 20px;
-                min-height: 150px;
-                flex-direction: column;
+                padding: 20px;
                 gap: 20px;
             }
-            .title-text {
-                font-size: 40px;
-                letter-spacing: 2px;
-            }
-            .nav-links {
-                width: 100%;
-                justify-content: center;
+            .nav-link {
+                font-size: 20px;
+                padding: 8px 20px;
             }
         }
 
@@ -711,11 +702,8 @@
     <div class="app-container">
         <!-- Title -->
         <div class="title">
-            <div class="title-text">FSM-GANG</div>
-            <div class="nav-links">
-                <a href="index.html" class="nav-link">Main</a>
-                <a href="stats.html" class="nav-link">Stats</a>
-            </div>
+            <a href="index.html" class="nav-link active">Main</a>
+            <a href="stats.html" class="nav-link">Player Profiles</a>
         </div>
 
         <!-- Main Content -->
