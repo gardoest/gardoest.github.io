@@ -340,6 +340,71 @@ function calculateGameHighlights() {
 }
 
 /**
+ * Calculate per-game high scores for a specific player (all-time)
+ * Returns object: {gameName: {score, date, count}}
+ * Also includes game count (how many times played)
+ */
+function calculatePlayerGameHighScores(player) {
+    if (!allData) return {};
+
+    const playerGameStats = {};
+    GAMES.forEach(game => {
+        playerGameStats[game] = { score: null, date: null, count: 0 };
+    });
+
+    allData.records.forEach(record => {
+        const game = normalizeGameName(record.game);
+        if (!GAMES.includes(game)) return;
+        if (record.scores[player] === null) return;
+
+        const score = record.scores[player];
+        playerGameStats[game].count += 1;
+
+        if (playerGameStats[game].score === null) {
+            playerGameStats[game] = { score, date: record.date, count: playerGameStats[game].count };
+        } else {
+            const rule = GAME_RULES[game];
+            if (rule.type === 'lowest') {
+                if (score < playerGameStats[game].score) {
+                    playerGameStats[game] = { score, date: record.date, count: playerGameStats[game].count };
+                }
+            } else {
+                if (score > playerGameStats[game].score) {
+                    playerGameStats[game] = { score, date: record.date, count: playerGameStats[game].count };
+                }
+            }
+        }
+    });
+
+    return playerGameStats;
+}
+
+/**
+ * Get all unique games that have been played
+ * Returns array of game names with play count
+ */
+function getUniqueGames() {
+    if (!allData) return [];
+
+    const gameStats = {};
+    GAMES.forEach(game => {
+        gameStats[game] = 0;
+    });
+
+    allData.records.forEach(record => {
+        const game = normalizeGameName(record.game);
+        if (GAMES.includes(game)) {
+            gameStats[game] += 1;
+        }
+    });
+
+    return GAMES.map(game => ({
+        name: game,
+        count: gameStats[game]
+    })).filter(g => g.count > 0);
+}
+
+/**
  * Calculate stats table data (all players with their stats)
  * Returns array of {name, points, average, games}
  */

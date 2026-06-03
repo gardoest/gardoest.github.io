@@ -39,9 +39,32 @@
             padding: 120px 20px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             border-bottom: 2px solid #ffffff;
             min-height: 200px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 16px;
+            border: 2px solid #ffffff;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: #ffffff;
+            color: #0a0a0a;
         }
 
         .title-text {
@@ -57,10 +80,16 @@
             .title {
                 padding: 60px 20px;
                 min-height: 150px;
+                flex-direction: column;
+                gap: 20px;
             }
             .title-text {
                 font-size: 40px;
                 letter-spacing: 2px;
+            }
+            .nav-links {
+                width: 100%;
+                justify-content: center;
             }
         }
 
@@ -683,6 +712,10 @@
         <!-- Title -->
         <div class="title">
             <div class="title-text">FSM-GANG</div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Main</a>
+                <a href="stats.html" class="nav-link">Stats</a>
+            </div>
         </div>
 
         <!-- Main Content -->
