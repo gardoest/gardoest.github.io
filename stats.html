@@ -141,33 +141,124 @@
             background: #ffffff;
         }
 
-        /* High Scores Grid */
-        .high-scores {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+        /* Carousel Container */
+        .carousel-container {
+            height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 0 60px;
+            perspective: 1200px;
             margin-bottom: 50px;
         }
 
-        @media (max-width: 768px) {
-            .high-scores {
-                grid-template-columns: 1fr;
-            }
+        .cards-wrapper {
+            position: relative;
+            width: 200px;
+            height: 320px;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        .score-card {
-            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+        .card-container {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -90px;
+            margin-top: -150px;
+            width: 180px;
+            height: 300px;
+            transform-style: preserve-3d;
+            opacity: 0.15;
+            transform: translate(0, 0) scale(0.7);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            pointer-events: auto;
+            z-index: 1;
+            cursor: pointer;
+        }
+
+        .card-container.active {
+            opacity: 1;
+            transform: translate(0, 0) scale(1);
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        .card-container:nth-child(2) {
+            transform: translateX(140px) scale(0.5) translateZ(-100px);
+            opacity: 0.15;
+        }
+
+        .card-container:nth-child(4) {
+            transform: translateX(-140px) scale(0.5) translateZ(-100px);
+            opacity: 0.15;
+        }
+
+        .card-container:nth-child(3) {
+            transform: translateY(-160px) scale(0.5) translateZ(-100px);
+            opacity: 0.15;
+        }
+
+        .card-container:nth-child(5) {
+            transform: translateY(160px) scale(0.5) translateZ(-100px);
+            opacity: 0.15;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
             border: 2px solid;
             border-image: linear-gradient(135deg, #ffffff 0%, #808080 100%) 1;
-            border-radius: 8px;
-            padding: 24px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+            padding: 20px;
         }
 
-        .score-card:hover {
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
+        .card-front:hover {
+            border-color: #ffffff;
+            box-shadow: 0 12px 48px rgba(255, 255, 255, 0.2);
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            border-image: linear-gradient(135deg, #ffffff 0%, #808080 100%) 1;
+        }
+
+        .card-container.active .card-front,
+        .card-container.active .card-back {
+            border-width: 3px;
+            border-image: linear-gradient(135deg, #ffffff 0%, #808080 100%) 1;
+            background: linear-gradient(135deg, #ffffff10 0%, #ffffff05 100%);
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
         }
 
         .game-label {
@@ -176,32 +267,99 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #808080;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .score-value {
-            font-size: 32px;
+            font-size: 42px;
             font-weight: 900;
             font-family: 'Inter', monospace;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            color: #ffffff;
         }
 
         .score-meta {
             font-size: 12px;
             color: #808080;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 6px;
+            text-align: center;
         }
 
         .score-meta-item {
             display: flex;
             flex-direction: column;
+            gap: 2px;
         }
 
         .score-meta-label {
             font-size: 10px;
             text-transform: uppercase;
-            opacity: 0.7;
+            opacity: 0.6;
+        }
+
+        /* Navigation buttons */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 32px;
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            z-index: 5;
+        }
+
+        .carousel-nav:hover {
+            color: #808080;
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        .carousel-nav.prev {
+            left: 0;
+        }
+
+        .carousel-nav.next {
+            right: 0;
+        }
+
+        .carousel-nav:active {
+            transform: translateY(-50%) scale(0.9);
+        }
+
+        @media (max-width: 768px) {
+            .carousel-container {
+                margin: 0 20px;
+            }
+
+            .card-container {
+                width: 140px;
+                height: 240px;
+                margin-left: -70px;
+                margin-top: -120px;
+            }
+
+            .cards-wrapper {
+                width: 140px;
+                height: 240px;
+            }
+
+            .game-label {
+                font-size: 10px;
+            }
+
+            .score-value {
+                font-size: 32px;
+            }
+
+            .carousel-nav {
+                font-size: 24px;
+                padding: 5px 10px;
+            }
         }
 
         /* Games Table */
@@ -303,10 +461,14 @@
                     <div class="player-selector" id="playerSelector"></div>
                 </div>
 
-                <!-- High Scores -->
+                <!-- High Scores Carousel -->
                 <div id="highScoresContainer">
                     <div class="section-title">Personal High Scores</div>
-                    <div class="high-scores" id="highScores"></div>
+                    <div class="carousel-container">
+                        <button class="carousel-nav prev" onclick="rotateCarousel(-1)">◀</button>
+                        <div class="cards-wrapper" id="cardsWrapper"></div>
+                        <button class="carousel-nav next" onclick="rotateCarousel(1)">▶</button>
+                    </div>
                 </div>
 
             </div>
@@ -327,6 +489,8 @@
         // ============================================================================
 
         let selectedPlayer = 'Gard'; // Default player
+        let currentCardIndex = 0;
+        let cardsData = [];
 
         /**
          * Initialize the page
@@ -350,6 +514,7 @@
                 btn.textContent = player;
                 btn.onclick = () => {
                     selectedPlayer = player;
+                    currentCardIndex = 0;
                     renderPlayerSelector();
                     renderPlayerStats();
                 };
@@ -358,47 +523,140 @@
         }
 
         /**
-         * Render the selected player's high scores
+         * Render the selected player's high scores as carousel cards
          */
         function renderPlayerStats() {
-            const container = document.getElementById('highScores');
             const gameStats = calculatePlayerGameHighScores(selectedPlayer);
 
-            if (Object.values(gameStats).every(g => g.score === null)) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-title">No games played yet</div>
-                        <div class="empty-state-text">${selectedPlayer} hasn't played any games</div>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = '';
-            GAMES.forEach(game => {
+            cardsData = GAMES.map(game => {
                 const stat = gameStats[game];
-                if (stat.score === null) return;
-
-                const card = document.createElement('div');
-                card.className = 'score-card';
+                if (stat.score === null) {
+                    return {
+                        game: game,
+                        score: '-',
+                        date: 'Never',
+                        count: 0,
+                        hasPlayed: false
+                    };
+                }
 
                 const dateStr = new Date(stat.date).toLocaleDateString('no-NO');
+                return {
+                    game: game,
+                    score: Math.round(stat.score),
+                    date: dateStr,
+                    count: stat.count,
+                    hasPlayed: true
+                };
+            });
 
-                card.innerHTML = `
-                    <div class="game-label">${game}</div>
-                    <div class="score-value">${Math.round(stat.score)}</div>
-                    <div class="score-meta">
-                        <div class="score-meta-item">
-                            <span class="score-meta-label">Times Played</span>
-                            <span>${stat.count}</span>
-                        </div>
-                        <div class="score-meta-item">
-                            <span class="score-meta-label">Date</span>
-                            <span>${dateStr}</span>
+            initCarousel();
+        }
+
+        /**
+         * Initialize carousel with card data
+         */
+        function initCarousel() {
+            const wrapper = document.getElementById('cardsWrapper');
+            wrapper.innerHTML = '';
+
+            cardsData.forEach((card, idx) => {
+                const container = document.createElement('div');
+                container.className = 'card-container' + (idx === 0 ? ' active' : '');
+                container.id = `card-${idx}`;
+                container.onclick = () => selectCard(idx);
+
+                const scoreDisplay = card.hasPlayed ? card.score : '-';
+                const dateDisplay = card.hasPlayed ? card.date : 'Not played';
+
+                const cardHtml = `
+                    <div class="card">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <div class="game-label">${card.game}</div>
+                                <div class="score-value">${scoreDisplay}</div>
+                                <div class="score-meta">
+                                    <div class="score-meta-item">
+                                        <span class="score-meta-label">Times Played</span>
+                                        <span>${card.count}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="game-label">${card.game}</div>
+                                <div class="score-meta">
+                                    <div class="score-meta-item">
+                                        <span class="score-meta-label">Best Date</span>
+                                        <span>${dateDisplay}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
-                container.appendChild(card);
+
+                container.innerHTML = cardHtml;
+                wrapper.appendChild(container);
+            });
+
+            updateCarousel();
+        }
+
+        /**
+         * Rotate carousel left or right
+         */
+        function rotateCarousel(direction) {
+            currentCardIndex = (currentCardIndex + direction + cardsData.length) % cardsData.length;
+            updateCarousel();
+        }
+
+        /**
+         * Select a specific card
+         */
+        function selectCard(index) {
+            if (index !== currentCardIndex) {
+                currentCardIndex = index;
+                updateCarousel();
+            } else {
+                // Flip card if already selected
+                const card = document.querySelector(`#card-${index} .card`);
+                if (card) {
+                    card.classList.toggle('flipped');
+                }
+            }
+        }
+
+        /**
+         * Update carousel positioning and visibility
+         */
+        function updateCarousel() {
+            document.querySelectorAll('.card-container').forEach((el, idx) => {
+                const isActive = idx === currentCardIndex;
+                el.classList.toggle('active', isActive);
+
+                if (isActive) {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translate(0, 0) scale(1) translateZ(0)';
+                    el.style.zIndex = '10';
+                } else {
+                    const relativeIndex = (idx - currentCardIndex + cardsData.length) % cardsData.length;
+                    let x = 0, y = 0, opacity = 0.15, z = -100;
+
+                    if (relativeIndex === 1 || relativeIndex === cardsData.length - 1) {
+                        x = relativeIndex === 1 ? 140 : -140;
+                        opacity = 0.15;
+                    } else if (relativeIndex === Math.ceil(cardsData.length / 2)) {
+                        y = -160;
+                        opacity = 0.15;
+                    } else if (relativeIndex > Math.ceil(cardsData.length / 2)) {
+                        y = 160;
+                        opacity = 0.15;
+                    }
+
+                    el.style.opacity = opacity.toString();
+                    el.style.transform = `translateX(${x}px) translateY(${y}px) scale(0.5) translateZ(${z}px)`;
+                    el.style.zIndex = '1';
+                }
             });
         }
 
